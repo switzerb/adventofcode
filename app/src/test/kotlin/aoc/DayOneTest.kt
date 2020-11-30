@@ -4,11 +4,13 @@
 package aoc
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class DayOneTest {
-    @Test fun testAppHasAGreeting() {
-        val classUnderTest = DayOne()
-        assertNotNull(classUnderTest.greeting, "app should have a greeting")
+    @Test fun testEx1() {
+        val input = "(())"
+        val solver = DayOne(input)
+        assertEquals(0, solver.partOne(), "solves day one correctly")
     }
 }
