@@ -6,9 +6,8 @@ const val DOWN = ')'
 class DayOne(val input: String) {
 
     fun partOne(): Int {
-        val isUp = input.filter { it == UP }
-        val isDown = input.filter { it == DOWN }
-        return isUp.length - isDown.length
+        val isUp = input.count { it == UP }
+        return isUp - (input.length - isUp)
     }
 }
 
