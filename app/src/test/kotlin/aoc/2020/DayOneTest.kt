@@ -5,11 +5,9 @@ package aoc.`2020`
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class DayOne2020Test {
-    @Test fun testEx1() {
-        val input = """
+    private val input = """
             1721
             979
             366
@@ -17,7 +15,14 @@ class DayOne2020Test {
             675
             1456
             """.trimIndent()
+
+    @Test fun testEx1() {
         val solver = DayOne2020(input)
-        assertEquals(514579, solver.partOne(), "solves day one correctly")
+        assertEquals(514579, solver.partOne(), "solves part one day one correctly")
+    }
+
+    @Test fun textEx2() {
+        val solver = DayOne2020(input)
+        assertEquals(241861950, solver.partTwo(), "solves part two day one correctly")
     }
 }
