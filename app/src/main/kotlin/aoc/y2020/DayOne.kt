@@ -1,12 +1,13 @@
-package aoc.`2020`
+package aoc.y2020
 
 import aoc.DayOne
+import kotlin.system.measureTimeMillis
 
 const val YEAR = 2020
 
-class DayOne2020(val input: String) {
+class DayOne2020(private val input: String) {
 
-    val numbers = parser()
+    private val numbers = parser()
 
     private fun parser(): List<Int> {
         val split = input.trim().lines()
@@ -14,11 +15,11 @@ class DayOne2020(val input: String) {
     }
 
     fun partOne():Int {
-        numbers.forEach {
-            val remainder = YEAR - it
-            val match = numbers.find { it == remainder }
+        numbers.forEach { first ->
+            val second = YEAR - first
+            val match = numbers.find { it == second }
             if(match != null) {
-                return it * remainder
+                return first * second
             }
         }
         return -1
@@ -52,6 +53,10 @@ fun main(args: Array<String>) {
     val cl = DayOne::class.java.classLoader.getResource("day1_2020.txt") ?: return
     val input = cl.readText();
     val solver = DayOne2020(input)
-    println("PART ONE: " + solver.partOne()); //514579
-    println("PART TWO: " + solver.partTwo()); //230608320
+    val timeInMillis = measureTimeMillis {
+        solver.partTwo()
+    }
+    println("(The operation took $timeInMillis ms)")
+//    println("PART ONE: " + solver.partOne()); //514579
+//    println("PART TWO: " + solver.partTwo()); //230608320
 }
