@@ -13,18 +13,39 @@ class DayTwoTest {
         2-9 c: ccccccccc
     """.trimIndent()
 
-    @Test fun testPasswordValid() {
+    @Test fun testSledPasswordValid() {
         val password = Password(1,3,'a', "abcde")
-        assertTrue(password.isValid())
+        assertTrue(password.isSledValid())
     }
 
-    @Test fun testPasswordInvalid() {
+    @Test fun testSledPasswordInvalid() {
         val password = Password(1,3, 'b', "cdefg")
-        assertFalse(password.isValid())
+        assertFalse(password.isSledValid())
+    }
+
+    @Test fun testTobogganPasswordValid() {
+        val password = Password(1,3,'a', "abcde")
+        assertTrue(password.isTobogganValid())
+    }
+
+    @Test fun testTobogganPasswordInvalidBoth() {
+        val password = Password(2,9, 'c', "ccccccccc")
+        assertFalse(password.isTobogganValid())
+    }
+
+    @Test fun testTobogganPasswordInvalidNeither() {
+        val password = Password(1,3, 'b', "cdefg")
+        assertFalse(password.isTobogganValid())
     }
 
     @Test fun testExample1() {
         val solver = DayTwo2020(input)
         assertEquals(2, solver.partOne())
     }
+
+    @Test fun testExample2() {
+        val solver = DayTwo2020(input)
+        assertEquals(1, solver.partTwo())
+    }
+
 }
