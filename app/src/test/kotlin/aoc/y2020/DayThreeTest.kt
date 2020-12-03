@@ -19,9 +19,14 @@ class DayThreeTest {
         .#..#...#.#
     """.trimIndent()
 
-    @Test fun testGrid() {
+    @Test fun testPartOne() {
         val solver = DayThree2020(input)
         assertEquals(7, solver.partOne())
+    }
+
+    @Test fun testGrid() {
+        val solver = DayThree2020(input)
+        assertEquals(336, solver.partTwo())
     }
 
 }
