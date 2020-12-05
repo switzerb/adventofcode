@@ -53,8 +53,6 @@ class DayFive2020(val input: String) {
 //            println("min $min, max $max")
             Range(min, max)
         }
-//        println(row.max)
-//        println(col.max)
         assert(row.max == row.min)
         assert(col.max == col.min)
         return (row.max * 8) + col.max
@@ -62,9 +60,27 @@ class DayFive2020(val input: String) {
 
     fun partOne(): Int {
         val lines = parser()
-        val all = lines.map { getSeatId(it)}
-        return all.max() ?: 0
+        val seats = lines
+                .map { getSeatId(it)}
+                .sorted()
+        return seats.max() ?: 0
     }
+
+    fun partTwo(): Int {
+        val lines = parser()
+        val seats = lines
+                .map { getSeatId(it)}
+                .sorted()
+        var count = 100
+        for(i in seats.indices) {
+           if(count != seats[i]) {
+               return seats[i] - 1
+           }
+            count++
+        }
+        return 0
+    }
+
 }
 
 fun main(args:Array<String>) {
@@ -72,5 +88,6 @@ fun main(args:Array<String>) {
     val input = cl.readText()
     val solver = DayFive2020(input)
     println("part one:" + solver.partOne()) // 861
+    println("part two:" + solver.partTwo()) // 633
 
 }
