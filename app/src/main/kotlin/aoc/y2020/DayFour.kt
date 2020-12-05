@@ -35,12 +35,7 @@ data class Passport(val attributes: Map<String,String>) {
 
     //    hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
     fun isValidHcl(v:String):Boolean {
-        val test = v
-                .trim()
-                .substring(v.indices)
-                .split("")
-                .slice(1..v.length)
-        return test[0] == "#" && test.all { c -> c.matches("#|[a-f]|[0-9]".toRegex()) }
+        return v.matches("#[a-f0-9]{6}".toRegex())
     }
 
     //    ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
@@ -50,7 +45,7 @@ data class Passport(val attributes: Map<String,String>) {
 
     //    pid (Passport ID) - a nine-digit number, including leading zeroes.
     fun isValidPid(v:String):Boolean {
-        return v.matches("\\d{9}".toRegex())
+        return v.matches("^[0-9]{9}$".toRegex())
     }
 //    cid (Country ID) - ignored, missing or not.
 
