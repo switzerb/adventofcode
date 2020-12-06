@@ -1,5 +1,7 @@
 package aoc.y2020
 
+import aoc.lib.getInput
+
 class DaySix2020(val input: String) {
 
     fun partOne(): Int {
@@ -37,8 +39,7 @@ class DaySix2020(val input: String) {
 }
 
 fun main(args: Array<String>) {
-    val cl = DaySix2020::class.java.classLoader.getResource("day6_2020.txt") ?: return
-    val input = cl.readText()
+    val input = getInput<DaySix2020>("day6_2020.txt")
     val solver = DaySix2020(input)
     println(solver.partOne()) // 7110
     println(solver.partTwo()) // 3628
