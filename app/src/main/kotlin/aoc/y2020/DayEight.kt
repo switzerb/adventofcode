@@ -1,58 +1,59 @@
+package aoc.y2020
+
+import aoc.lib.getInput
 
 data class Instruction(val type: String, val amount: Int ) {}
 
 class DayEight2020(val input: String) {
 
     private val instr = parseInput()
-    val nothing: Unit = Unit
 
     private fun parseInput(): List<Instruction> {
-        return listOf(
-                Instruction("nop", 0),
-                Instruction("acc", 1),
-                Instruction("jmp", -4))
+        val lines = input.trim().lines()
+        return lines.map {
+            val parts = it.split(" ")
+            Instruction(parts[0], parts[1].toInt())
+        }
     }
 
     fun partOne() : Int {
-        runInstructions()
-        return 0
+        return runInstructions()
     }
 
     private fun runInstructions() : Int {
-        val curr = 0 //index of list
-        val accVal = 0
-        val notLoop = true
+        var curr = 0 //index of list
+        var accVal = 0
         val visited = mutableListOf<Int>() // list of index values we have visited
 
-        //        val accValue = 0
-        while (notLoop) {
-            // do a thing, starting with the current position
-            visited.add(1)
-//            switch statement of instructions
+        while (true) {
+            if (visited.contains(curr)) return accVal
+            visited.add(curr)
             val current = instr[curr]
             when(current.type) {
-                "acc" -> acc(current.amount)
-                "jmp" -> jmp(current.amount)
-                "nop" -> nothing
-                else -> nothing
+                "acc" -> {
+                    accVal = acc(current.amount, accVal)
+                    curr++
+                }
+                "jmp" -> curr = jmp(current.amount, curr)
+                "nop" -> curr++
+                else -> curr++
             }
-            println(curr)
         }
-        return 0
     }
 
     // I take an amount and return a new current position
-    private fun jmp(amount: Int) : Int {
-        return 0
+    private fun jmp(amount: Int, curr: Int) : Int {
+        return curr + amount
     }
 
     // I take an instruction amount and return a new accumulated value
-    private fun acc(amount: Int) : Int {
-        return 0
+    private fun acc(amount: Int, accVal: Int) : Int {
+        return accVal + amount
     }
 }
 
 fun main(args: Array<String>) {
-    println("hello")
-    // accumulator
+    val input = getInput<DayEight2020>("day8_2020.txt")
+    val solver = DayEight2020(input)
+    println(solver.partOne()) 1709
 }
