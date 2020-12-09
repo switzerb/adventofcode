@@ -12,7 +12,7 @@ class DayEight2020(val input: String) {
         val lines = input.trim().lines()
         return lines.map {
             val parts = it.split(" ")
-            Instruction(parts[0], parts[1].toInt())
+            Instruction(parts.first(), parts.last().toInt())
         }
     }
 
@@ -55,5 +55,5 @@ class DayEight2020(val input: String) {
 fun main(args: Array<String>) {
     val input = getInput<DayEight2020>("day8_2020.txt")
     val solver = DayEight2020(input)
-    println(solver.partOne()) 1709
+    println(solver.partOne()) //1709
 }
