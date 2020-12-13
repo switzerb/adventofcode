@@ -10,20 +10,24 @@ inline fun <reified T> getInput(resource: String): String {
 
 object Resources {
 
-    private fun rawAsList(input: String): List<String> = input.split("\n")
+    // TODO: pass in the function that you want to be applied to the list
 
-    fun rawAsInt(input: String): List<Int> = rawAsList(input).map { it.toInt() }
+    private fun rawAsList(input: String): List<String> = input.trim().split("\n")
 
-    fun rawAsLong(input: String): List<Long> = rawAsList(input).map { it.toLong() }
+    fun rawAsInts(input: String): List<Int> = rawAsList(input).map { it.toInt() }
+
+    fun rawAsLongs(input: String): List<Long> = rawAsList(input).map { it.toLong() }
 
     private fun fileAsList(fileName: String): List<String> =
             File(fileName.toURI()).readLines()
 
-    fun fileAsLong(fileName: String): List<Long> =
+    fun fileAsLongs(fileName: String): List<Long> =
             fileAsList(fileName).map { it.toLong() }
 
-    fun fileAsInt(fileName: String): List<Int> =
+    fun fileAsInts(fileName: String): List<Int> =
         fileAsList(fileName).map { it.toInt() }
+
+    fun fileAsString(fileName: String): String = File(fileName.toURI()).readText()
 
     private fun String.toURI(): URI =
             Resources::class.java.classLoader.getResource(this)?.toURI() ?: throw IllegalArgumentException("No resource found: $this")

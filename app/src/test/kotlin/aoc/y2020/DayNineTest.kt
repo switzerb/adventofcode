@@ -1,6 +1,6 @@
 package aoc.y2020
 
-import aoc.lib.Resources.rawAsLong
+import aoc.lib.Resources.rawAsLongs
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -31,13 +31,13 @@ class DayNine2020Test {
 
     @Test
     fun part1() {
-        val solver = DayNine2020(rawAsLong(input), 5)
+        val solver = DayNine2020(rawAsLongs(input), 5)
         assertEquals(127, solver.partOne())
     }
 
     @Test
     fun part2() {
-        val solver = DayNine2020(rawAsLong(input), 5)
+        val solver = DayNine2020(rawAsLongs(input), 5)
         assertEquals(62, solver.partTwo())
     }
 }

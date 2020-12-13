@@ -1,4 +1,4 @@
-import aoc.lib.Resources.rawAsInt
+import aoc.lib.Resources.rawAsInts
 import aoc.y2020.DayTen2020
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -53,8 +53,8 @@ class DayTen2020Test {
         3
     """.trimIndent()
 
-    private val dayten_ex1 = DayTen2020(rawAsInt(input))
-    val dayten_ex2 = DayTen2020(rawAsInt(input2))
+    private val dayten_ex1 = DayTen2020(rawAsInts(input))
+    val dayten_ex2 = DayTen2020(rawAsInts(input2))
 
     @Test
     fun ex1() {

@@ -1,6 +1,6 @@
 package aoc.y2020
 
-import aoc.lib.Resources.fileAsLong
+import aoc.lib.Resources.fileAsLongs
 
 class DayNine2020(val input: List<Long>, private val window: Int) {
 
@@ -30,7 +30,7 @@ class DayNine2020(val input: List<Long>, private val window: Int) {
 }
 
 fun main(args: Array<String>){
-    val input = fileAsLong("day9_2020.txt")
+    val input = fileAsLongs("day9_2020.txt")
     val solver = DayNine2020(input, 25)
     println(solver.partOne()) //69316178
     println(solver.partTwo()) //9351526
