@@ -34,7 +34,7 @@ class DayTen2020(val input: List<Int>) {
                     2 -> 2
                     3 -> 4
                     4 -> 7
-                    else-> 1 }
+                    else-> throw IllegalArgumentException("length not supported") }
             }
             .fold(1.toLong()) { a, n -> n * a }
     }
