@@ -53,15 +53,45 @@ class DayTen2020Test {
         3
     """.trimIndent()
 
+    private val dayten_ex1 = DayTen2020(rawAsInt(input))
+    val dayten_ex2 = DayTen2020(rawAsInt(input2))
+
     @Test
     fun ex1() {
-        val solver = DayTen2020(rawAsInt(input))
-        assertEquals(7*5,solver.partOne())
+        assertEquals(7*5,dayten_ex1.partOne())
     }
 
     @Test
     fun ex2() {
-        val solver = DayTen2020(rawAsInt(input2))
-        assertEquals(22*10, solver.partOne())
+        assertEquals(22*10, dayten_ex2.partOne())
+    }
+
+//    0, 1, 4
+//    1, 4, 5,
+//    4, 5, 6
+//    5, 6, 7
+//    6, 7, 10,
+//    7, 10, 11,
+//    10, 11, 12,
+//    15, 16, 19
+//
+//    exponents
+//     0   1, 3, 1, 1, 1, 3,  1,  1,  3,  1,  3,  3
+//    (0), 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19, (22)
+//    (0), 1, 4,    6, 7, 10, 11, 12, 15, 16, 19, (22)
+//    (0), 1, 4, 5,    7, 10, 11, 12, 15, 16, 19, (22)
+//    (0), 1, 4, 5, 6, 7, 10,     12, 15, 16, 19, (22)
+//    (0), 1, 4, 5,    7, 10,     12, 15, 16, 19, (22)
+//    (0), 1, 4,    6, 7, 10,     12, 15, 16, 19, (22)
+//    (0), 1, 4,       7, 10, 11, 12, 15, 16, 19, (22)
+//    (0), 1, 4,       7, 10,     12, 15, 16, 19, (22)
+    @Test
+    fun ex3() {
+        assertEquals(8,dayten_ex1.partTwo())
+    }
+
+    @Test
+    fun ex4() {
+        assertEquals(19208, dayten_ex2.partTwo())
     }
 }
