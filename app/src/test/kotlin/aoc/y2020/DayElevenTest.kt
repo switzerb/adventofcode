@@ -26,6 +26,11 @@ class DayEleven2020Test {
     }
 
     @Test
+    fun ex2() {
+        assertEquals(26, solver.partTwo())
+    }
+
+    @Test
     fun testToCoordinates() {
         val seatMap = solver.getInitial()
         assertEquals(Point(0,0), seatMap.toPoint(0))
@@ -78,6 +83,38 @@ class DayEleven2020Test {
         val seatMap = solver.getInitial()
         val next = seatMap.tick().tick()
         assertEquals(expected, next.toString())
+    }
+
+    @Test
+    fun exSeatFind() {
+        val input = """
+            .......#.
+            ...#.....
+            .#.......
+            .........
+            ..#L....#
+            ....#....
+            .........
+            #........
+            ...#.....
+        """.trimIndent()
+        val grid = SeatGrid.parse(input)
+        assertEquals(8,grid.getLineOfSightNeighbors(39).size)
+    }
+
+    @Test
+    fun exSeatFind2() {
+        val input = """
+            .##.##.
+            #.#.#.#
+            ##...##
+            ...L...
+            ##...##
+            #.#.#.#
+            .##.##.
+        """.trimIndent()
+        val grid = SeatGrid.parse(input)
+        assertEquals(0,grid.getLineOfSightNeighbors(24).size)
     }
 
 }
