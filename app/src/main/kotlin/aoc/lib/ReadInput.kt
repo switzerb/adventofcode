@@ -18,7 +18,7 @@ object Resources {
 
     fun rawAsLongs(input: String): List<Long> = rawAsList(input).map { it.toLong() }
 
-    private fun fileAsList(fileName: String): List<String> =
+    fun fileAsList(fileName: String): List<String> =
             File(fileName.toURI()).readLines()
 
     fun fileAsLongs(fileName: String): List<Long> =
