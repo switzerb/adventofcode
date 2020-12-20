@@ -14,4 +14,9 @@ class DayThirteen2020Test {
     fun ex1() {
         assertEquals(295, solver.partOne())
     }
+
+    @Test
+    fun ex2() {
+        assertEquals(1068781, solver.partTwo())
+    }
 }
