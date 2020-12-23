@@ -12,7 +12,7 @@ object Resources {
 
     // TODO: pass in the function that you want to be applied to the list
 
-    private fun rawAsList(input: String): List<String> = input.trim().split("\n")
+    fun rawAsList(input: String): List<String> = input.trim().split("\n")
 
     fun rawAsInts(input: String): List<Int> = rawAsList(input).map { it.toInt() }
 
