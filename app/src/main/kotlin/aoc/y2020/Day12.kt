@@ -1,20 +1,20 @@
 package aoc.y2020
 
 import aoc.lib.Dir
-import aoc.lib.Position
 import aoc.lib.Resources.fileAsList
+import aoc.lib.Vector
 
 data class Action(val type: Char, val units: Int)
 
-data class Waypoint(val pos : Position = Position(10, 1)) {
+data class Waypoint(val pos : Vector = Vector(10, 1)) {
 
-    fun clockwise(deg: Int): Waypoint = Waypoint((0 until deg/90).fold(pos) { p, _ -> Position(p.y, -p.x)})
+    fun clockwise(deg: Int): Waypoint = Waypoint((0 until deg/90).fold(pos) { p, _ -> Vector(p.y(), -p.x())})
 
     fun move(dir: Dir, units: Int): Waypoint = Waypoint(pos.moveBy(dir, units))
 
 }
 
-data class Ship(val pos: Position, val facing: Dir, val waypoint: Waypoint = Waypoint()) {
+data class Ship(val pos: Vector, val facing: Dir, val waypoint: Waypoint = Waypoint()) {
 
     private fun clockwise(deg: Int): Ship = Ship(pos, (0 until deg/90).fold(facing) { f, _ -> f.clockwise() })
 
@@ -35,8 +35,8 @@ data class Ship(val pos: Position, val facing: Dir, val waypoint: Waypoint = Way
         }
     }
 
-    fun moveShipToWaypoint(units: Int): Position =
-        Position(pos.x + waypoint.pos.x * units, pos.y + waypoint.pos.y * units)
+    fun moveShipToWaypoint(units: Int): Vector =
+        Vector(pos.x() + waypoint.pos.x() * units, pos.y() + waypoint.pos.y() * units)
 
     fun runWithWaypoint(action: Char, units: Int) : Ship {
         return when (action) {
@@ -57,20 +57,20 @@ class DayTwelve2020(input: List<String>) {
     private val actions: List<Action> = input.map { Action(it.first(), it.drop(1).toInt()) }
 
     fun partOne(): Int {
-        val start = Ship(Position.ORIGIN, Dir.EAST)
+        val start = Ship(Vector.ORIGIN2D, Dir.EAST)
         val destination = actions.fold(start) { current, action ->
                 current.run(action.type, action.units)
             }
-        return Position.ORIGIN.getManhattanDistance(destination.pos)
+        return Vector.ORIGIN2D.getManhattanDistance(destination.pos)
     }
 
     fun partTwo(): Int {
-        val waypoint = Waypoint(Position(10, 1))
-        val start = Ship(Position.ORIGIN, Dir.EAST, waypoint)
+        val waypoint = Waypoint(Vector(10, 1))
+        val start = Ship(Vector.ORIGIN2D, Dir.EAST, waypoint)
         val destination = actions.fold(start) { current, action ->
             current.runWithWaypoint(action.type, action.units)
         }
-        return Position.ORIGIN.getManhattanDistance(destination.pos)
+        return Vector.ORIGIN2D.getManhattanDistance(destination.pos)
     }
 }
 
