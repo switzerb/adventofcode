@@ -34,9 +34,25 @@ class Vector {
         Dir.SOUTH -> Vector(x(), y() - units)
     }
 
+    operator fun plus(other: Vector) : Vector {
+        return Vector(this.coords.zip(other.coords).map { it.first + it.second })
+    }
+
     companion object {
         val ORIGIN2D = Vector(0, 0)
         val ORIGIN3D = Vector(0, 0, 0)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if(other !is Vector) { return false }
+        return this.coords == other.coords
+    }
+
+    override fun hashCode(): Int {
+        return this.coords.hashCode()
+    }
+
+    override fun toString(): String {
+        return this.coords.toString()
+    }
 }
