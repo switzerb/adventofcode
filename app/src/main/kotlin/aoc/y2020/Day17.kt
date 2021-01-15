@@ -2,6 +2,35 @@ package aoc.y2020
 
 import aoc.lib.Vector
 
+val deltas = listOf(
+    Vector( 1, 1,1),
+    Vector( 0, 1, 1),
+    Vector(-1, 1, 1),
+    Vector( 1, 0, 1),
+    Vector( 0, 0, 1),
+    Vector(-1, 0, 1),
+    Vector( 1,-1, 1),
+    Vector( 0,-1, 1),
+    Vector(-1,-1, 1),
+    Vector( 1, 1, 0),
+    Vector( 0, 1, 0),
+    Vector(-1, 1, 0),
+    Vector( 1, 0, 0),
+    Vector(-1, 0, 0),
+    Vector( 1,-1, 0),
+    Vector( 0,-1, 0),
+    Vector(-1,-1, 0),
+    Vector( 1, 1,-1),
+    Vector( 0, 1,-1),
+    Vector(-1, 1,-1),
+    Vector( 1, 0,-1),
+    Vector( 0, 0,-1),
+    Vector(-1, 0,-1),
+    Vector( 1,-1,-1),
+    Vector( 0,-1,-1),
+    Vector(-1,-1,-1)
+)
+
 data class PocketDimension(val cubes: Set<Vector>) {
 
     //either search or add richness to data
@@ -28,26 +57,8 @@ data class PocketDimension(val cubes: Set<Vector>) {
 
 class Day172020(val input: String) {
 
-//    Each cube only ever considers its neighbors:
-//    any of the 26 other cubes where any of their coordinates
-//    differ by at most 1. For example, given the
-//    cube at x=1,y=2,z=3, its neighbors include
-//    the cube at x=2,y=2,z=2, the cube at x=0,y=2,z=3, and so on.
-    fun getNeighbors() : List<Vector> {
-    /**
-     * loop over deltas to get all the neighbors
-     * 3 cubed minus 1 (26)
-     * activeThing +
-     * vector(1,0,0)
-     * vector(0,0,0)
-     * vector(1,0,0)
-     * vector(-1,0,0)
-     * vector(0,1,0)
-     * vector(0,-1,0)
-     * vector(0,0,1)
-     * vector(0,0,-1)
-     */
-        return emptyList()
+    fun getNeighbors(cube: Vector) : List<Vector> {
+        return deltas.map { it + cube }
     }
 
     /**
@@ -56,6 +67,21 @@ class Day172020(val input: String) {
      *  - If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. Otherwise, the cube remains inactive.
      */
     fun cycle(): Unit {
+        val next = mutableSetOf<Vector>()
+        val pd = PocketDimension.parse("initial")
+        pd.cubes.map { cube ->
+            // for each active cube in my pocket dimension
+            println(cube)
+            // get all the adjacent cubes and find the count of active
+            val neighbors = getNeighbors(cube)
+                .filter { pd.cubes.contains(it)}
+                .size
+            if (neighbors == 2 || neighbors == 3) {
+                next.add(cube)
+            }
+// If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. Otherwise, the cube remains inactive.
+
+        }
         // since it's simultaneous, then we can't mutate in place - write a new copy of the map?
     }
 

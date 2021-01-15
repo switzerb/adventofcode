@@ -52,7 +52,9 @@ class Vector {
         return this.coords.hashCode()
     }
 
+    // TODO: Implement to string
     override fun toString(): String {
         return this.coords.toString()
     }
+
 }
