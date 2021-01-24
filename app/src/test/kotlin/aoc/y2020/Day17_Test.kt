@@ -10,6 +10,13 @@ class Day17Test {
         ..#
         ###
     """.trimIndent()
+
+    @Test
+    fun testStringPrint() {
+        val pd = PocketDimension.parse("noop")
+        println(pd)
+    }
+
     @Test
     fun ex1() {
         val solver = Day172020(input)

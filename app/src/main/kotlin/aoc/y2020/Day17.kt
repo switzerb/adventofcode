@@ -33,15 +33,18 @@ val deltas = listOf(
 
 data class PocketDimension(val cubes: Set<Vector>) {
 
-    //either search or add richness to data
     // get bounds on next tick
+    private val minX = -5
+    private val maxX = 5
+    private val minY = -5
+    private val maxY = 5
 
     companion object {
-        //set of active cubes
+        // set of active cubes
         fun parse(input: String) : PocketDimension {
             val init =  setOf(
                 Vector(1,0,0),
-                Vector(2,0,0),
+                Vector(2,1,0),
                 Vector(0,2,0),
                 Vector(1,2,0),
                 Vector(2,2,0)
@@ -51,7 +54,18 @@ data class PocketDimension(val cubes: Set<Vector>) {
     }
 
     override fun toString(): String {
-        return super.toString()
+        val sb = StringBuilder()
+        val layers = this.cubes.groupBy { it.z() }
+        layers.keys.map { z ->
+            sb.append("z=$z\n")
+            (minY..maxY).map { y ->
+                (minX..maxX).map { x ->
+                    if (cubes.contains(Vector(x,y,z))) sb.append("#") else sb.append(".")
+                }
+                sb.append("\n")
+            }
+        }
+        return sb.toString()
     }
 }
 
