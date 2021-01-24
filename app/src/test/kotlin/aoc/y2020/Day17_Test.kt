@@ -12,9 +12,9 @@ class Day17Test {
     """.trimIndent()
 
     @Test
-    fun testStringPrint() {
+    fun cycle() {
         val pd = PocketDimension.parse("noop")
-        println(pd)
+        println(pd.cycle())
     }
 
     @Test

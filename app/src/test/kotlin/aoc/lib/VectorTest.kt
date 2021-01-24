@@ -24,8 +24,7 @@ class VectorTest {
     @Test
     fun testGetNeighbors() {
         val cube = Vector(1,2,3)
-        val neighbors = solver.getNeighbors(cube)
-        assertTrue(neighbors.contains(Vector(2,2,2)))
-        assertTrue(neighbors.contains(Vector(0,2,3)))
+        assertTrue(cube.neighbors().contains(Vector(2,2,2)))
+        assertTrue(cube.neighbors().contains(Vector(0,2,3)))
     }
 }
