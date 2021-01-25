@@ -36,15 +36,18 @@ class Day18(val input: List<String>) {
         val products = mutableListOf<Long>()
         var adds: Long = 0
         while (exp.hasNext()) {
-            val next = exp.nextChar()
-            when {
-                next == '(' -> adds += evalWithPrecedence(exp)
-                next == ')' -> break
-                next == '*' -> {
+            when(val next = exp.nextChar()) {
+                '*' -> {
                     products += adds
                     adds = 0
                 }
-                next.isDigit() -> adds += next.toString().toLong()
+                '(' -> adds += evalWithPrecedence(exp)
+                '+' -> continue
+                ')' -> break
+                else -> {
+                    if(!next.isDigit()) throw IllegalArgumentException("$next cannot be evaluated")
+                    adds += next.toString().toLong()
+                }
             }
         }
         return (products + adds).reduce { a, it -> a * it }
