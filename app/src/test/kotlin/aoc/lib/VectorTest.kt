@@ -24,4 +24,12 @@ class VectorTest {
         assertTrue(cube.neighbors().contains(Vector(2,2,2)))
         assertTrue(cube.neighbors().contains(Vector(0,2,3)))
     }
+
+    @Test
+    fun testAdjacentDeltas() {
+        assertEquals(2, Vector.adjacentDeltas(1).size)
+        assertEquals(8, Vector.adjacentDeltas(2).size)
+        assertEquals(26, Vector.adjacentDeltas(3).size)
+        assertEquals(80, Vector.adjacentDeltas(4).size)
+    }
 }
