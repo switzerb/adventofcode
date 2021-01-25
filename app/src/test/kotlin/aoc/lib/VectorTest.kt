@@ -1,13 +1,10 @@
 package aoc.lib
 
-import aoc.y2020.Day172020
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class VectorTest {
-
-    val solver = Day172020("something")
 
     @Test
     fun plus() {
