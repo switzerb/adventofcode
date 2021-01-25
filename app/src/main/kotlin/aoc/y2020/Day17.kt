@@ -11,33 +11,15 @@ data class PocketDimension(val cubes: Set<Vector>) {
             val init = mutableSetOf<Vector>()
             input.mapIndexed { y, row ->
                 row.mapIndexed { x, cube ->
-                    if(cube == '#') init.add(Vector(x,y,0))
+                    if(cube == '#') init.add(Vector(listOf(x,y,0,0)))
                  }
             }
             return PocketDimension(init)
         }
     }
 
-    override fun toString(): String {
-        val sb = StringBuilder()
-        val layers = this.cubes.groupBy { it.z() }
-        layers.keys.reversed().map { z ->
-            sb.append("z=$z\n")
-            (0..5).map { y ->
-                (0..5).map { x ->
-                    if (cubes.contains(Vector(x,y,z))) sb.append("#") else sb.append(".")
-                }
-                sb.append("\n")
-            }
-        }
-        return sb.toString()
-    }
-
     private fun activeNeighbors(cube: Vector) : Int {
-        return cube
-            .neighbors()
-            .filter { this.cubes.contains(it) }
-            .size
+        return cube.neighbors().count { this.cubes.contains(it) }
     }
 
     /**
@@ -48,7 +30,9 @@ data class PocketDimension(val cubes: Set<Vector>) {
     fun cycle(): PocketDimension {
         val next = mutableSetOf<Vector>()
         cubes.map { cube ->
-            if(activeNeighbors(cube) == 2 || activeNeighbors(cube) == 3) next.add(cube)
+            val activeNeighbors = activeNeighbors(cube)
+            if(activeNeighbors == 2 || activeNeighbors == 3) next.add(cube)
+
             cube.neighbors().forEach { neighbor ->
                 if(activeNeighbors(neighbor) == 3) next.add(neighbor)
             }
@@ -81,5 +65,5 @@ class Day172020(val input: List<String>) {
 fun main(args: Array<String>) {
     val solver = Day172020(fileAsList("day17_2020.txt"))
     println(solver.partOne()) // 386
-    println(solver.partTwo()) // 386
+    println(solver.partTwo()) // 2276
 }

@@ -62,7 +62,7 @@ class Vector {
         return Vector(this.coords.zip(other.coords).map { it.first + it.second })
     }
 
-    fun neighbors(): List<Vector> = adjacentDeltas().map { it + this }
+    fun neighbors(): List<Vector> = adjacentDeltas(coords.size).map { it + this }
 
     override fun equals(other: Any?): Boolean {
         if(other !is Vector) { return false }
