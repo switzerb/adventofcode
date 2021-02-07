@@ -1,5 +1,6 @@
 package aoc.y2020
 
+import aoc.lib.MutableStack
 import aoc.lib.Resources.fileAsList
 
 class Day18(val input: List<String>) {
@@ -21,7 +22,6 @@ class Day18(val input: List<String>) {
                 }
             }
             if(nums.size == 2) {
-//                println(nums)
                 val (a,b) = nums
                 with(nums) {
                     clear()
@@ -62,8 +62,60 @@ class Day18(val input: List<String>) {
     }
 }
 
+private fun precedence(c: Char) : Int {
+    return when(c) {
+        ')' -> 4
+        '*' -> 3
+        '/' -> 3
+        '+' -> 2
+        '-' -> 2
+        '(' -> 1
+        else -> 0
+    }
+}
+
+private fun result(op: Char, a: Long, b: Long): Long {
+    return when(op) {
+        '+' -> a + b
+        '-' -> a - b
+        '*' -> a * b
+        '/' -> a / b
+        else -> throw IllegalArgumentException("$op is not a recognized operator.")
+    }
+}
+
+fun evaluate(expr: CharIterator) : Long {
+    val ops = MutableStack<Char>();
+    val values = MutableStack<Long>();
+
+    while (expr.hasNext()) {
+        val c = expr.nextChar()
+        when(c) {
+            '(' -> ops.push(c)
+            ')' -> {
+                while(!ops.isEmpty() && ops.peek() != '(' ) {
+                    values.push(result(ops.pop(), values.pop(), values.pop()))
+                    ops.pop()
+                }
+            }
+            '+', '-', '*', '/' -> {
+                while(!ops.isEmpty() && (precedence(ops.peek()!!) >= precedence(c))) {
+                    values.push(result(ops.pop(), values.pop(), values.pop()))
+                }
+                ops.push(c)
+            }
+            else -> values.push(c.toString().toLong())
+        }
+    }
+    return values.pop()
+}
+
+
 fun main(args :Array<String>) {
     val solver = Day18(fileAsList("day18_2020.txt"))
     println(solver.partOne()) //11076907812171
     println(solver.partTwo()) //283729053022731
+
+val expression = "(1+(1+2))"
+    println(evaluate(expression.iterator()))
 }
