@@ -1,6 +1,7 @@
 package aoc.y2020
 
-import aoc.lib.Resources
+import aoc.lib.Resources.fileAsList
+import aoc.lib.Resources.rawAsList
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -37,7 +38,7 @@ class Day19Test {
 
     @Test
     fun testRuleParse() {
-        val solver = Day19(Resources.rawAsList(input1))
+        val solver = Day19(rawAsList(input1))
         assertTrue(solver.ruleMatch("aab"))
         assertTrue(solver.ruleMatch("aba"))
         assertFalse(solver.ruleMatch("aaa"))
@@ -46,26 +47,50 @@ class Day19Test {
 
     @Test
     fun testRuleCount() {
-        val solver = Day19(Resources.rawAsList(input1))
+        val solver = Day19(rawAsList(input1))
         assertEquals(2,solver.partOne())
     }
 
     @Test
     fun testRuleParse2() {
-        val solver = Day19(Resources.rawAsList(input2))
+        val solver = Day19(rawAsList(input2))
         assertTrue(solver.ruleMatch("ababbb"))
     }
 
     @Test
     fun testRuleParse3() {
-        val solver = Day19(Resources.rawAsList(input2))
+        val solver = Day19(rawAsList(input2))
         assertFalse(solver.ruleMatch("aaaabbb"))
     }
 
     @Test
     fun testExample2() {
-        val solver = Day19(Resources.rawAsList(input2))
+        val solver = Day19(rawAsList(input2))
         assertEquals(2, solver.partOne())
+    }
+
+    @Test
+    fun testPartTwoNoLoop() {
+        val solver = Day19(fileAsList("day19_2020_test.txt"))
+        assertEquals(3, solver.partOne())
+    }
+
+    @Test
+    fun testPartTwoMatcher1() {
+        val solver = Day19(fileAsList("day19_2020_test.txt"))
+        assertTrue(solver.matchPartTwo("bbabbbbaabaabba"))
+    }
+
+    @Test
+    fun testPartTwoMatcher2() {
+        val solver = Day19(fileAsList("day19_2020_test.txt"))
+        assertTrue(solver.matchPartTwo("babbbbaabbbbbabbbbbbaabaaabaaa"))
+    }
+
+    @Test
+    fun testPartTwoLoop() {
+        val solver = Day19(fileAsList("day19_2020_test.txt"))
+        assertEquals(12, solver.partTwo())
     }
 
 }
