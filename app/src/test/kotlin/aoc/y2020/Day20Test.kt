@@ -104,4 +104,19 @@ class Day20Test {
         """.trimIndent())
         assertEquals(flipped.toString(),tile.flip().toString())
     }
+
+    @Test
+    fun testFlipTileHarder() {
+        val tile = Tile(2311, """
+            ..#
+            .#.
+            #..
+        """.trimIndent())
+        val flipped = Tile(2311, """
+            #..
+            .#.
+            ..#
+        """.trimIndent())
+        assertEquals(flipped.toString(),tile.flip().toString())
+    }
 }

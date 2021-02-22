@@ -5,7 +5,7 @@ import kotlin.math.sqrt
 
 data class Tile(val id: Int, val s: String) {
 
-    private val pixels: CharArray = s
+    private var pixels: CharArray = s
         .filter { it == '.' || it == '#' }
         .toCharArray()
     private val width: Int = sqrt(pixels.size.toDouble()).toInt()
@@ -31,6 +31,12 @@ data class Tile(val id: Int, val s: String) {
     fun hasMatch(edge: String): Boolean = edge in edges
 
     fun flip() : Tile {
+        pixels = pixels
+            .toList()
+            .chunked(width)
+            .map { it.reversed() }
+            .flatten()
+            .toCharArray()
         return this
     }
 
