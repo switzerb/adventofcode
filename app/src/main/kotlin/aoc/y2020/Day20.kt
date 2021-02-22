@@ -29,6 +29,14 @@ data class Tile(val id: Int, val s: String) {
 
     fun hasMatch(edge: String): Boolean = edge in edges
 
+    fun flip() : Tile {
+        return this
+    }
+
+    fun rotateClockwise() : Tile {
+        return this
+    }
+
     override fun toString(): String {
         return pixels
             .toList()
@@ -45,13 +53,17 @@ data class Tile(val id: Int, val s: String) {
         other as Tile
 
         if (id != other.id) return false
+        if (!pixels.contentEquals(other.pixels)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return id
+        var result = id
+        result = 31 * result + pixels.contentHashCode()
+        return result
     }
+
 
 }
 
@@ -96,21 +108,22 @@ class Day20(val input: String) {
 
 /*
     organize the tiles into their correct spaces
-       build histogram of tiles to the set of shared edges -- an adjacency graph of the larger image
-       start with a center piece
-         choose one edge
-    rotate and flip until they are all the correct orientation
-      flip method
-      rotate method
-      rotate through each direction,
-        then and rotate through again until you get a match to the edge
+       ~build histogram of tiles to the set of shared edges -- an adjacency graph of the larger image
+       flip method
+       rotate method
+       start with an edge piece
+         flip or rotate until that corner is the upper left of the image (e.g. the no-match is the top and left edge)
+         look at the right edge and find the matching tile
+             rotate and flip until that one is in the correct orientation
+                  rotate through each direction,
+                    then and rotate through again until you get a match to the edge
+             keep going
     stitch the final tiles into one image
         remove all the matched borders
         concatenate them all into one string
     pattern matching to find all the "sea monsters"
     return the habitat's water roughness
         total number of hashes in final image - (num sea monsters found * 15 (hash in monster))
-
 */
     fun partTwo(): Int {
         return 0
