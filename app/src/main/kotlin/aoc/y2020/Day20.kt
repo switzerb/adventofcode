@@ -41,6 +41,18 @@ data class Tile(val id: Int, val s: String) {
     }
 
     fun rotateClockwise() : Tile {
+        val chunker = pixels
+            .toList()
+            .chunked(width)
+
+        pixels = chunker
+            .mapIndexed { x, row ->
+                row.mapIndexed { y, _ ->
+                    chunker[y][x]
+                }.reversed()
+            }
+            .flatten()
+            .toCharArray()
         return this
     }
 

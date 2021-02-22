@@ -119,4 +119,33 @@ class Day20Test {
         """.trimIndent())
         assertEquals(flipped.toString(),tile.flip().toString())
     }
+
+    @Test
+    fun testRotate() {
+        val tile = Tile(2311, """
+            .#
+            ..
+        """.trimIndent())
+        val rotated = Tile(2311, """
+            ..
+            .#
+        """.trimIndent())
+        assertEquals(rotated.toString(),tile.rotateClockwise().toString())
+    }
+
+    @Test
+    fun testRotateTileHarder() {
+        val tile = Tile(2311, """
+            ###
+            ...
+            ...
+        """.trimIndent())
+        val rotated = Tile(2311, """
+            ..#
+            ..#
+            ..#
+        """.trimIndent())
+        assertEquals(rotated.toString(),tile.rotateClockwise().toString())
+    }
+
 }
