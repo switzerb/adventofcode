@@ -1,13 +1,14 @@
 package aoc.y2020
 
 import aoc.lib.Resources.fileAsString
+import kotlin.math.sqrt
 
 data class Tile(val id: Int, val s: String) {
 
     private val pixels: CharArray = s
         .filter { it == '.' || it == '#' }
         .toCharArray()
-    private val width: Int = 10
+    private val width: Int = sqrt(pixels.size.toDouble()).toInt()
 
     private val borders: List<String> = Orientation.values().map { getBorder(it) }
     private val flipped: List<String> = borders.map { it.reversed() }
@@ -53,15 +54,12 @@ data class Tile(val id: Int, val s: String) {
         other as Tile
 
         if (id != other.id) return false
-        if (!pixels.contentEquals(other.pixels)) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = id
-        result = 31 * result + pixels.contentHashCode()
-        return result
+        return id
     }
 
 
