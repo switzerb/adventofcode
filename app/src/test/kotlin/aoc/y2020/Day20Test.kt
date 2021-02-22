@@ -79,9 +79,16 @@ class Day20Test {
     }
 
     @Test
-    fun testPartOne() {
+    fun testPartOneExample() {
         val input = fileAsString("day20_2020_test.txt")
         val solver = Day20(input)
         assertEquals(20899048083289, solver.partOne())
+    }
+
+    @Test
+    fun testPartOne() {
+        val input = fileAsString("day20_2020.txt")
+        val solver = Day20(input)
+        assertEquals(174206308298779, solver.partOne())
     }
 }

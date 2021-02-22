@@ -75,14 +75,13 @@ class Day20(val input: String) {
 
     fun countTotalEdges() : Int = tiles.sumOf { tile -> tile.edges.size }
 
-    private fun buildSharedEdges(): Map<Int,Int> {
-        val edgeMap: MutableMap<Int,Int> = mutableMapOf()
-        tiles.map { tile ->
-            edgeMap[tile.id] = tiles
+    // TODO: Blog post for associate family of methods
+    private fun buildSharedEdges(): Map<Tile,List<Tile>> {
+        return tiles.associateWith { tile ->
+            tiles
                 .filterNot { tile.id == it.id }
-                .count { other -> tile.hasMatchedEdge(other) }
+                .filter { other -> tile.hasMatchedEdge(other) }
         }
-        return edgeMap
     }
 
 //    corner == 2 sides in common
@@ -90,9 +89,31 @@ class Day20(val input: String) {
 //    inner = 4 sides in common
     fun partOne(): Long {
         return buildSharedEdges()
-            .filterValues { it == 2 }
-            .keys
+            .filterValues { it.size == 2 }
+            .keys.map { it.id }
             .fold(1L, { acc, item -> item * acc })
+    }
+
+/*
+    organize the tiles into their correct spaces
+       build histogram of tiles to the set of shared edges -- an adjacency graph of the larger image
+       start with a center piece
+         choose one edge
+    rotate and flip until they are all the correct orientation
+      flip method
+      rotate method
+      rotate through each direction,
+        then and rotate through again until you get a match to the edge
+    stitch the final tiles into one image
+        remove all the matched borders
+        concatenate them all into one string
+    pattern matching to find all the "sea monsters"
+    return the habitat's water roughness
+        total number of hashes in final image - (num sea monsters found * 15 (hash in monster))
+
+*/
+    fun partTwo(): Int {
+        return 0
     }
 
 }
@@ -101,4 +122,5 @@ fun main(args: Array<String>) {
     val input = fileAsString("day20_2020.txt")
     val solver = Day20(input)
     println(solver.partOne())
+
 }
