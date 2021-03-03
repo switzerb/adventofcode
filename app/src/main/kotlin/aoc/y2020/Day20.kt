@@ -79,8 +79,6 @@ data class Tile(val id: Int, val s: String) {
     override fun hashCode(): Int {
         return id
     }
-
-
 }
 
 enum class Orientation {
@@ -124,9 +122,9 @@ class Day20(val input: String) {
 
 /*
     organize the tiles into their correct spaces
-       ~build histogram of tiles to the set of shared edges -- an adjacency graph of the larger image
-       flip method
-       rotate method
+       ~~ build histogram of tiles to the set of shared edges -- an adjacency graph of the larger image
+       ~~ flip method
+       ~~ rotate method
        start with an edge piece
          flip or rotate until that corner is the upper left of the image (e.g. the no-match is the top and left edge)
          look at the right edge and find the matching tile
