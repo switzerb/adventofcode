@@ -9,7 +9,7 @@ class Vector {
         val ORIGIN2D = Vector(0, 0)
         val ORIGIN3D = Vector(0, 0, 0)
 
-        fun adjacentDeltas(dim: Int = 3) : List<Vector> {
+        fun adjacentDeltas(dim: Int = 3): List<Vector> {
             val origin = Vector(emptyList())
             var deltas = mutableListOf(origin)
 
@@ -26,7 +26,6 @@ class Vector {
             deltas.removeAt(deltas.size / 2)
             return deltas
         }
-
     }
 
     constructor(coords: List<Int>) {
@@ -49,7 +48,7 @@ class Vector {
     fun y(): Int = get(1)
     fun z(): Int = get(2)
 
-    fun getManhattanDistance(other: Vector) =  abs(x() - other.x()) + abs(y() - other.y())
+    fun getManhattanDistance(other: Vector) = abs(x() - other.x()) + abs(y() - other.y())
 
     fun moveBy(dir: Dir, units: Int): Vector = when (dir) {
         Dir.EAST -> Vector(x() + units, y())
@@ -58,14 +57,14 @@ class Vector {
         Dir.SOUTH -> Vector(x(), y() - units)
     }
 
-    operator fun plus(other: Vector) : Vector {
+    operator fun plus(other: Vector): Vector {
         return Vector(this.coords.zip(other.coords).map { it.first + it.second })
     }
 
     fun neighbors(): List<Vector> = adjacentDeltas(coords.size).map { it + this }
 
     override fun equals(other: Any?): Boolean {
-        if(other !is Vector) { return false }
+        if (other !is Vector) { return false }
         return this.coords == other.coords
     }
 
@@ -77,5 +76,4 @@ class Vector {
     override fun toString(): String {
         return this.coords.toString()
     }
-
 }
