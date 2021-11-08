@@ -1,9 +1,9 @@
 package aoc.lib
 
-enum class Dir() {
+enum class Direction() {
     NORTH, SOUTH, EAST, WEST;
 
-    fun clockwise(): Dir = when (this) {
+    fun clockwise(): Direction = when (this) {
         NORTH -> EAST
         EAST -> SOUTH
         SOUTH -> WEST

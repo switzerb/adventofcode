@@ -1,6 +1,6 @@
 package aoc.y2020
 
-import aoc.lib.Dir
+import aoc.lib.Direction
 import aoc.lib.Vector
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -35,13 +35,13 @@ class DayTwelve2020Test {
 
     @Test
     fun moveShipToWaypoint() {
-        val ship = Ship(Vector.ORIGIN2D, Dir.EAST, Waypoint())
+        val ship = Ship(Vector.ORIGIN2D, Direction.EAST, Waypoint())
         assertEquals(Vector(100,10),ship.moveShipToWaypoint(10))
     }
 
     @Test
     fun moveShipToWaypoint2() {
-        val ship = Ship(Vector(170,38),Dir.EAST, Waypoint(Vector(4,-10)))
+        val ship = Ship(Vector(170,38),Direction.EAST, Waypoint(Vector(4,-10)))
         assertEquals(Vector(214,-72), ship.moveShipToWaypoint(11))
     }
 

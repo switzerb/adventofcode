@@ -50,11 +50,11 @@ class Vector {
 
     fun getManhattanDistance(other: Vector) = abs(x() - other.x()) + abs(y() - other.y())
 
-    fun moveBy(dir: Dir, units: Int): Vector = when (dir) {
-        Dir.EAST -> Vector(x() + units, y())
-        Dir.WEST -> Vector(x() - units, y())
-        Dir.NORTH -> Vector(x(), y() + units)
-        Dir.SOUTH -> Vector(x(), y() - units)
+    fun moveBy(dir: Direction, units: Int): Vector = when (dir) {
+        Direction.EAST -> Vector(x() + units, y())
+        Direction.WEST -> Vector(x() - units, y())
+        Direction.NORTH -> Vector(x(), y() + units)
+        Direction.SOUTH -> Vector(x(), y() - units)
     }
 
     operator fun plus(other: Vector): Vector {
