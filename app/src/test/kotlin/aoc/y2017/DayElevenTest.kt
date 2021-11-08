@@ -5,7 +5,7 @@ import kotlin.test.assertTrue
 
 class DayElevenTest {
 
-    @Test fun test() {
+    @Test fun ex1() {
         assertTrue(true)
     }
 }

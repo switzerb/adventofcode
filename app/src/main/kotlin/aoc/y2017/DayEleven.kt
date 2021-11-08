@@ -3,8 +3,14 @@ import aoc.lib.Resources.fileAsString
 
 class DayEleven(private val input: String) {
 
+    enum class HexDir {
+        N, NW, NE, S, SE, SW, E, W;
+    }
+
     fun partOne(): String {
-       return input
+
+        // Create grid
+        return input
     }
 
     fun partTwo() {}
