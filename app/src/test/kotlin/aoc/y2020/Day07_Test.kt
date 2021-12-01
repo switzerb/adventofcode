@@ -1,8 +1,8 @@
 package aoc.y2020
 
+import aoc.lib.Resources.rawAsList
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DaySeven2020Test {
 
@@ -18,9 +18,31 @@ class DaySeven2020Test {
         dotted black bags contain no other bags.
     """.trimIndent()
 
+    val input2 = """
+        shiny gold bags contain 2 dark red bags.
+        dark red bags contain 2 dark orange bags.
+        dark orange bags contain 2 dark yellow bags.
+        dark yellow bags contain 2 dark green bags.
+        dark green bags contain 2 dark blue bags.
+        dark blue bags contain 2 dark violet bags.
+        dark violet bags contain no other bags.
+    """.trimIndent()
+
     @Test
     fun ex1() {
-        val solver = DaySeven2020(input)
-        assertEquals(0, solver.partOne())
+        val solver = DaySeven2020(rawAsList(input))
+        assertEquals(4, solver.partOne())
+    }
+
+    @Test
+    fun ex1p2() {
+        val solver = DaySeven2020(rawAsList(input))
+        assertEquals(32, solver.partTwo())
+    }
+
+    @Test
+    fun ex2p2() {
+        val solver = DaySeven2020(rawAsList(input2))
+        assertEquals(126, solver.partTwo())
     }
 }
