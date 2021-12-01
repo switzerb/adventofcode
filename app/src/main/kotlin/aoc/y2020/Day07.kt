@@ -1,64 +1,60 @@
 package aoc.y2020
 
-import com.google.common.graph.GraphBuilder
-import com.google.common.graph.MutableGraph
+import aoc.lib.Resources.fileAsList
 
-data class Bag(val bag: String, val containedBy: Map<String, Char>) {}
+class DaySeven2020(val input: List<String>) {
 
-class DaySeven2020(val input: String) {
+    data class Rule(val parent: String, val contains: Int, val child: String)
 
-    private fun parseBag(input: String): String {
-        return input.replace("(bags|bag|[.])".toRegex(), "")
+    private fun parseInput(input: List<String>): Set<Rule> =
+        input.filterNot {
+            it.contains("no other")
+        }
+            .flatMap { each ->
+                val parts = each.replace("""bags|bag|contain|,|\.""".toRegex(), "").split("""\s+""".toRegex())
+                val parent = parts.take(2).joinToString(" ")
+                parts
+                    .drop(2)
+                    .windowed(3, 3, false)
+                    .map { child ->
+                        Rule(
+                            parent,
+                            child.first().toInt(),
+                            child.drop(1).joinToString(" ")
+                        )
+                    }
+            }.toSet()
+
+    private val rules: Set<Rule> = parseInput(input)
+
+    fun findOuterBag(bag: String = "shiny gold"): Set<String> {
+        return rules
+            .filter {
+                it.child == bag
+            }
+            .flatMap {
+                findOuterBag(it.parent)
+            }
+            .toSet() + bag
     }
 
-    private fun parser(): List<Bag> {
-        return input
-                .lines()
-                .map {
-                    val parts = it.split("contain")
-                    val bag = parseBag(parts[0])
-                    Bag(bag, emptyMap())
+    fun findTotals(bag: String = "shiny gold"): Int =
+        rules
+            .filter { it.parent == bag }
+            .sumBy { it.contains * findTotals(it.child) } + 1
 
-//                    if(instr[1] == " no other bags.") {
-//                        Rule(instr[0].replace("(bags|bag|[.])".toRegex(), ""), emptyMap())
-//                    } else {
-//                        val children = instr[1].split(",")
-//                        val something = mutableMapOf<String, Char>()
-//                        children.forEach { bags ->
-//                            val count = bags.trim().first()
-//                            val bag = bags
-//                                    .trim()
-//                                    .substring(2)
-//                                    .replace("(bags|bag|[.])".toRegex(), "")
-//                                    .trim()
-//                                something[bag] = count
-//                        }
-//                        Rule(instr[0].replace("(bags|bag|[.])".toRegex(), ""), something)
-//                    }
-                }
+    fun partOne(): Int {
+        return findOuterBag().size - 1
     }
 
-//    You have a shiny gold bag. If you wanted to carry it in at least one other bag,
-//    how many different bag colors would be valid for the outermost bag?
-//    (In other words: how many colors can, eventually, contain at least one shiny gold bag?)
-    fun partOne():Int {
-    val rules = parser()
-    return rules
-            .mapNotNull { it.containedBy["shiny gold"] }
-            .size
+    fun partTwo(): Int {
+        return findTotals() - 1
     }
+
 }
 
 fun main(args: Array<String>) {
-    println("hello world")
-
-    val bags: MutableGraph<String> = GraphBuilder.directed().build()
-
-    with(bags) {
-        addNode("gold")
-        addNode("red")
-        addNode("blue")
-    }
-    bags.putEdge("red", "gold")
-    println("jesus")
+    val solver = DaySeven2020(fileAsList("day7_2020.txt"))
+    println(solver.partOne()) // 131
+    println(solver.partTwo()) // 11261
 }
