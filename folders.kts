@@ -55,12 +55,13 @@ data class AocDay(
     val testText = """
     package aoc.y$year
 
-    import kotlin.test.Test
-    import kotlin.test.assertTrue
+    import org.junit.Test
+    import org.junit.Assert.assertEquals
 
     class ${dayAsName}Test {
 
-        @Test fun test() {
+        @Test
+        fun test() {
             assertTrue(true)
         }
     }
