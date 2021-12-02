@@ -1,7 +1,7 @@
 package aoc.y2021
 
 import aoc.lib.Resources.rawAsList
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DayOneTest {
