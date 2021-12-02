@@ -1,17 +1,39 @@
 package aoc.y2021
-import aoc.lib.Resources.fileAsString
+import aoc.lib.Resources.fileAsList
 
-class DayTwo(private val input: String) {
+data class Step(val command: String, val amount: Int)
 
-    fun partOne(): String {
-        return input
+class DayTwo(private val input: List<String>) {
+
+    fun parse(): List<Step> {
+        return input.map { line ->
+            line.split(" ")
+        }.map { step ->
+            Step(command = step[0], amount = step[1].toInt())
+        }
+    }
+
+    fun partOne(): Int {
+        var position = 0
+        var depth = 0
+
+        val parsedInput = parse()
+
+        parsedInput.map { step ->
+            when (step.command) {
+                "forward" -> position += step.amount
+                "down" -> depth += step.amount
+                "up" -> depth -= step.amount
+            }
+        }
+        return position * depth
     }
 
     fun partTwo() {}
 }
 
 fun main(args: Array<String>) {
-    val input = fileAsString("day02_2021.txt")
+    val input = fileAsList("day02_2021.txt")
     val solver = DayTwo(input)
-    println(solver.partOne())
+    println(solver.partOne()) // 1698735
 }
