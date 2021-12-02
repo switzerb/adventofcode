@@ -15,9 +15,15 @@ class DayTwoTest {
         forward 2
     """.trimIndent()
 
+    val solver = DayTwo(rawAsList(input))
+
     @Test
-    fun test() {
-        val solver = DayTwo(rawAsList(input))
+    fun testP1() {
         assertEquals(150, solver.partOne())
+    }
+
+    @Test
+    fun testP2() {
+        assertEquals(900, solver.partTwo())
     }
 }
