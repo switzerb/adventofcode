@@ -55,8 +55,8 @@ data class AocDay(
     val testText = """
     package aoc.y$year
 
+    import org.junit.Assert.assertTrue
     import org.junit.Test
-    import org.junit.Assert.assertEquals
 
     class ${dayAsName}Test {
 
