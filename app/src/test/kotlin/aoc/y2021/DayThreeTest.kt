@@ -7,6 +7,6 @@ class DayThreeTest {
 
     @Test
     fun test() {
-        assertTrue(true)
+        assertEquals(true, true)
     }
 }
