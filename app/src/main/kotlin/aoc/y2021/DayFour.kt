@@ -1,6 +1,5 @@
 package aoc.y2021
 import aoc.lib.Resources.fileAsList
-import aoc.lib.Resources.fileAsString
 
 typealias BingoBoard = List<List<Int>>
 

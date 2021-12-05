@@ -9,7 +9,7 @@ class DayThirteen2020(val timestamp: Int, val input: List<String>) {
         val whatever = schedule
             .map { it - (timestamp % it) }
             .zip(schedule)
-            .minBy { it.first }
+            .minByOrNull { it.first }
         return whatever?.first?.times(whatever.second)
     }
 

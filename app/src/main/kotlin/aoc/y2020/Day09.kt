@@ -7,12 +7,12 @@ class DayNine2020(val input: List<Long>, private val window: Int) {
     private var preamble = window
 
     fun partOne(): Long =
-            input.windowed(preamble+1, 1, false).first { !it.preambleIsValid() }.last()
+        input.windowed(preamble + 1, 1, false).first { !it.preambleIsValid() }.last()
 
     fun partTwo(): Long {
         val target = partOne()
         val range = input.takeWhile { it != target }.findSums(target)
-        return range.min()!! + range.max()!!
+        return range.minOrNull()!! + range.maxOrNull()!!
     }
 
     private fun List<Long>.preambleIsValid(): Boolean {
@@ -22,16 +22,16 @@ class DayNine2020(val input: List<Long>, private val window: Int) {
     }
 
     private fun List<Long>.findSums(target: Long): List<Long> =
-            this.indices.mapNotNull { start ->
-                this.indices.drop(start+1).reversed().mapNotNull { end ->
-                    this.subList(start, end).takeIf { it.sum() == target }
-                }.firstOrNull()
-            }.first()
+        this.indices.mapNotNull { start ->
+            this.indices.drop(start + 1).reversed().mapNotNull { end ->
+                this.subList(start, end).takeIf { it.sum() == target }
+            }.firstOrNull()
+        }.first()
 }
 
-fun main(args: Array<String>){
+fun main(args: Array<String>) {
     val input = fileAsLongs("day9_2020.txt")
     val solver = DayNine2020(input, 25)
-    println(solver.partOne()) //69316178
-    println(solver.partTwo()) //9351526
+    println(solver.partOne()) // 69316178
+    println(solver.partTwo()) // 9351526
 }
