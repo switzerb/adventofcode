@@ -5,19 +5,46 @@ class DayThree(private val input: List<String>, val width: Int = 12) {
 
     val n = width - 1
 
+    private fun <T> Pair<List<T>, List<T>>.longest(): List<T> =
+        if (first.size >= second.size) first else second
+
+    private fun <T> Pair<List<T>, List<T>>.shortest(): List<T> =
+        if (first.size < second.size) first else second
+
+    fun filterByBitCriteria(compare: String): String {
+        return input
+            .first()
+            .indices
+            .fold(input) { inputs, column ->
+                if (inputs.size == 1) inputs else {
+                    val split = inputs.partition { it[column] == '1' }
+                    if (compare == "more") split.longest() else split.shortest()
+                }
+            }.first()
+    }
+
+    fun histogram(idx: Int): Map<Char, Int> {
+        return input
+            .groupingBy { it[idx] }
+            .eachCount()
+    }
+
+    fun getMostCommon(idx: Int): Char {
+        val max = histogram(idx).maxByOrNull { it.value }
+        return max?.key!!
+    }
+
+    fun getLeastCommon(idx: Int): Char {
+        val min = histogram(idx).minByOrNull { it.value }
+        return min?.key!!
+    }
+
     fun getRate(compare: String): String {
         val rate = mutableListOf<Char>()
         (0..n).map { idx ->
-            val histogram = input
-                .groupingBy { it[idx] }
-                .eachCount()
-
-            val max = histogram.maxByOrNull { it.value }
-            val min = histogram.minByOrNull { it.value }
-
             when (compare) {
-                "more" -> rate.add(max?.key!!)
-                "less" -> rate.add(min?.key!!)
+                "more" -> rate.add(getMostCommon(idx))
+                "less" -> rate.add(getLeastCommon(idx))
                 else -> null
             }
         }
@@ -30,11 +57,16 @@ class DayThree(private val input: List<String>, val width: Int = 12) {
         return gammaDecimal * epsilonDecimal
     }
 
-    fun partTwo() {}
+    fun partTwo(): Int {
+        val oxygenRating = filterByBitCriteria("more")
+        val CO2scrubber = filterByBitCriteria("less")
+        return oxygenRating.toInt(2) * CO2scrubber.toInt(2)
+    }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsList("day03_2021.txt")
     val solver = DayThree(input)
     println(solver.partOne()) // 2640986
+    println(solver.partTwo())
 }

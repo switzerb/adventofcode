@@ -22,20 +22,26 @@ class DayThreeTest {
         01010
     """.trimIndent()
 
+    val solver = DayThree(
+        input = rawAsList(input),
+        width = 5
+    )
+
     @Test
-    fun testEx1() {
-        val solver = DayThree(
-            input = rawAsList(input),
-            width = 5
-        )
+    fun testEx1P1() {
         assertEquals(solver.partOne(), 198)
     }
 
     @Test
     fun testDay1Actual() {
-        val solver = DayThree(
+        val actual = DayThree(
             input = fileAsList("day03_2021.txt")
         )
-        assertEquals(solver.partOne(), 2640986)
+        assertEquals(actual.partOne(), 2640986)
+    }
+
+    @Test
+    fun testEx1P2() {
+        assertEquals(solver.partTwo(), 230)
     }
 }
