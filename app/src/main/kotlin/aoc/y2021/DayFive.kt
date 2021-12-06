@@ -1,6 +1,7 @@
 package aoc.y2021
 import aoc.lib.Resources.fileAsList
 import aoc.lib.Vector
+import java.lang.Math.abs
 
 class DayFive(private val input: List<String>) {
 
@@ -19,29 +20,44 @@ class DayFive(private val input: List<String>) {
     }
 
     fun expandLines(p1: Vector, p2: Vector): List<Vector> {
-        if (p1.x() == p2.x()) {
-            if (p1.y() < p2.y()) {
-                return (p1.y()..p2.y()).map { point ->
-                    Vector(p1.x(), point)
-                }
-            } else {
-                return (p1.y() downTo p2.y()).map { point ->
-                    Vector(p1.x(), point)
+        val x1 = p1.x()
+        val x2 = p2.x()
+        val y1 = p1.y()
+        val y2 = p2.y()
+
+        when {
+            x1 == x2 -> {
+                return (minOf(y1, y2)..maxOf(y1, y2))
+                    .map {
+                        Vector(x1, it)
+                    }
+            }
+            y1 == y2 -> {
+                return (minOf(x1, x2)..maxOf(x1, x2))
+                    .map {
+                        Vector(it, y1)
+                    }
+            }
+            else -> {
+                // slope is either 1 or -1
+                val minX = minOf(x1, x2)
+                val maxX = maxOf(x1, x2)
+                val minY = minOf(y1, y2)
+                val maxY = maxOf(y1, y2)
+
+                val distance = abs(x1 - x2)
+
+                return (0..distance).map { idx ->
+                    when {
+                        (x1 < x2 && y1 < y2) -> Vector(minX + idx, minY + idx)
+                        (x1 > x2 && y1 < y2) -> Vector(maxX - idx, minY + idx)
+                        (x1 < x2 && y1 > y2) -> Vector(minX + idx, maxY - idx)
+                        (x1 > x2 && y1 > y2) -> Vector(maxX - idx, maxY - idx)
+                        else -> throw Error("This should be possible")
+                    }
                 }
             }
         }
-        if (p1.y() == p2.y()) {
-            if (p1.x() < p2.x()) {
-                return (p1.x()..p2.x()).map { point ->
-                    Vector(point, p1.y())
-                }
-            } else {
-                return (p1.x() downTo p2.x()).map { point ->
-                    Vector(point, p1.y())
-                }
-            }
-        }
-        return emptyList()
     }
 
     fun partOne(): Int {

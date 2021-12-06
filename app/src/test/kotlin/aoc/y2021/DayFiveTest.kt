@@ -35,11 +35,23 @@ class DayFiveTest {
             Vector(1, 3),
         )
         val expandedX = listOf(
-            Vector(9, 7),
-            Vector(8, 7),
             Vector(7, 7),
+            Vector(8, 7),
+            Vector(9, 7),
+        )
+        val expandedDiag1 = listOf(
+            Vector(1, 1),
+            Vector(2, 2),
+            Vector(3, 3)
+        )
+        val expandedDiag2 = listOf(
+            Vector(9, 7),
+            Vector(8, 8),
+            Vector(7, 9),
         )
         assertEquals(expandedY, solver.expandLines(Vector(1, 1), Vector(1, 3)))
         assertEquals(expandedX, solver.expandLines(Vector(9, 7), Vector(7, 7)))
+        assertEquals(expandedDiag1, solver.expandLines(Vector(1, 1), Vector(3, 3)))
+        assertEquals(expandedDiag2, solver.expandLines(Vector(9, 7), Vector(7, 9)))
     }
 }
