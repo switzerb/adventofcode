@@ -2,7 +2,7 @@ package aoc.y2021
 
 import aoc.lib.Resources.fileAsString
 
-class DaySix(private val input: String) {
+class DaySix(input: String) {
     val lanternfish: LongArray = parseInput(input)
 
     fun partOne(): Long =
@@ -12,9 +12,8 @@ class DaySix(private val input: String) {
         run(256)
 
     private fun run(days: Int): Long {
-        repeat(days) {
+        (1..days).forEach {
             progressGeneration()
-            lanternfish[6] += lanternfish[8]
         }
         return lanternfish.sum()
     }
@@ -26,7 +25,8 @@ class DaySix(private val input: String) {
     private fun progressGeneration() {
         val first = lanternfish.first()
         lanternfish.copyInto(lanternfish, startIndex = 1)
-        lanternfish[lanternfish.lastIndex] = first
+        lanternfish[8] = first
+        lanternfish[6] += lanternfish[8]
     }
 
     private fun parseInput(input: String): LongArray =
@@ -41,6 +41,6 @@ class DaySix(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("day06_2021.txt")
     val solver = DaySix(input)
-    println(solver.partOne()) //390011
+//    println(solver.partOne()) //390011
     println(solver.partTwo()) //1852978735751314 NOPE
 }
