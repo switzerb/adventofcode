@@ -13,7 +13,7 @@ class DaySix(private val input: String) {
 
     private fun run(days: Int): Long {
         repeat(days) {
-            lanternfish.progressGeneration()
+            progressGeneration()
             lanternfish[6] += lanternfish[8]
         }
         return lanternfish.sum()
@@ -23,7 +23,7 @@ class DaySix(private val input: String) {
     // count how many fish are at that point in the cycle
     // progress fish through the array by moving them into
     // a different bucket
-    private fun LongArray.progressGeneration() {
+    private fun progressGeneration() {
         val first = lanternfish.first()
         lanternfish.copyInto(lanternfish, startIndex = 1)
         lanternfish[lanternfish.lastIndex] = first
