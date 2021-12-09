@@ -13,18 +13,20 @@ class DaySix(private val input: String) {
 
     private fun run(days: Int): Long {
         repeat(days) {
-            val progression = progressGeneration(lanternfish)
-            progression[6] += progression[8]
+            lanternfish.progressGeneration()
+            lanternfish[6] += lanternfish[8]
         }
         return lanternfish.sum()
     }
 
     // array index is day
-    private fun progressGeneration(lanternfish: LongArray): LongArray {
+    // count how many fish are at that point in the cycle
+    // progress fish through the array by moving them into
+    // a different bucket
+    private fun LongArray.progressGeneration() {
         val first = lanternfish.first()
         lanternfish.copyInto(lanternfish, startIndex = 1)
         lanternfish[lanternfish.lastIndex] = first
-        return lanternfish
     }
 
     private fun parseInput(input: String): LongArray =
@@ -40,5 +42,5 @@ fun main(args: Array<String>) {
     val input = fileAsString("day06_2021.txt")
     val solver = DaySix(input)
     println(solver.partOne()) //390011
-    println(solver.partTwo()) //1852978735751314
+    println(solver.partTwo()) //1852978735751314 NOPE
 }

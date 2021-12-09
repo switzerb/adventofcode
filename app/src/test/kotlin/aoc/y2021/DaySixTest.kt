@@ -15,6 +15,7 @@ class DaySixTest {
         assertEquals(5934, solver.partOne())
     }
 
+    @Test
     fun testPartTwo() {
         val solver = DaySix(input)
         assertEquals(26984457539, solver.partTwo())
