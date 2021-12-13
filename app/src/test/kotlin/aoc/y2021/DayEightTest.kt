@@ -25,8 +25,27 @@ class DayEightTest {
     """.trimIndent()
 
     @Test
-    fun test() {
+    fun testP1() {
         val solver = DayEight(rawAsList(input2))
         assertEquals(26, solver.partOne())
+    }
+
+    @Test
+    fun testP2() {
+        val digits = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab".split(' ')
+        val output = "cdfeb fcadb cdfeb cdbaf"
+            .split(' ')
+            .map {
+                it.toSortedSet().joinToString("")
+            }
+
+        val solver = DayEight(rawAsList(input2))
+        assertEquals(5353, solver.getTranslated(digits,output))
+    }
+
+    @Test
+    fun testP2Ex2() {
+        val solver = DayEight(rawAsList(input2))
+        assertEquals(61229, solver.partTwo())
     }
 }
