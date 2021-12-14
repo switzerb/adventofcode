@@ -39,12 +39,12 @@ class DayEight(private val input: List<String>) {
     fun getTranslated(digits: List<String>, output: List<String>): Int {
         val numbers = arrayOfNulls<String>(10)
 
-        val one = digits.find { it.length == ONE }?.sort()!!
-        val seven = digits.find { it.length == SEVEN }?.sort()!!
-        val four = digits.find { it.length == FOUR }?.sort()!!
-        val eight = digits.find { it.length == EIGHT }?.sort()!!
-        val fiveSet = digits.filter { it.length == 5 }.map { digit -> digit.sort() }
-        val sixSet = digits.filter { it.length == 6 }.map { digit -> digit.sort() }
+        val one = digits.find { it.length == ONE }!!
+        val seven = digits.find { it.length == SEVEN }!!
+        val four = digits.find { it.length == FOUR }!!
+        val eight = digits.find { it.length == EIGHT }!!
+        val fiveSet = digits.filter { it.length == 5 }
+        val sixSet = digits.filter { it.length == 6 }
 
         val three = fiveSet.find { digit -> digit.toSet().containsAll(one.toSet()) }!!
         val nine = sixSet.find { digit -> digit.toSet().containsAll(four.toSet()) }!!
@@ -58,21 +58,20 @@ class DayEight(private val input: List<String>) {
         val six = six_or_zero.find { each -> each.toSet().containsAll(five.toSet()) }!!
         val zero = six_or_zero.find { each -> each != six }!!
 
-        numbers[0] = zero.sort()
-        numbers[1] = one.sort()
-        numbers[2] = two.sort()
-        numbers[3] = three.sort()
-        numbers[4] = four.sort()
-        numbers[5] = five.sort()
-        numbers[6] = six.sort()
-        numbers[7] = seven.sort()
-        numbers[8] = eight.sort()
-        numbers[9] = nine.sort()
+        numbers[0] = zero
+        numbers[1] = one
+        numbers[2] = two
+        numbers[3] = three
+        numbers[4] = four
+        numbers[5] = five
+        numbers[6] = six
+        numbers[7] = seven
+        numbers[8] = eight
+        numbers[9] = nine
 
         val translated = output.map {
             numbers.indexOf(it)
         }
-        println(translated)
         return translated.joinToString("").toInt()
     }
 
@@ -81,7 +80,7 @@ class DayEight(private val input: List<String>) {
             val (left, right) = line
                 .split("|")
                 .map { it.trim() }
-            val digits = left.split(" ").map { it.trim() }
+            val digits = left.split(" ").map { it.trim() }.map { it.sort() }
             val output = right.split(" ").map { it.trim().toSortedSet().joinToString("") }
             getTranslated(digits, output)
         }
