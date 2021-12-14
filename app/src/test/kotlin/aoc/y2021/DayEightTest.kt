@@ -24,9 +24,10 @@ class DayEightTest {
         gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     """.trimIndent()
 
+    val solver = DayEight(rawAsList(input2))
+
     @Test
     fun testP1() {
-        val solver = DayEight(rawAsList(input2))
         assertEquals(26, solver.partOne())
     }
 
@@ -39,13 +40,37 @@ class DayEightTest {
                 it.toSortedSet().joinToString("")
             }
 
-        val solver = DayEight(rawAsList(input2))
-        assertEquals(5353, solver.getTranslated(digits,output))
+        assertEquals(5353, solver.getTranslated(digits, output))
     }
 
     @Test
     fun testP2Ex2() {
-        val solver = DayEight(rawAsList(input2))
         assertEquals(61229, solver.partTwo())
+    }
+
+    @Test
+    fun testP2Ex3() {
+        val digits = "fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega".split(' ')
+        val output = "efabcd cedba gadfec cb"
+            .split(' ')
+            .map {
+                it.toSortedSet().joinToString("")
+            }
+        assertEquals(9361, solver.getTranslated(digits, output))
+    }
+
+    @Test
+    fun testP2Ex4() {
+        val digits = "be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb"
+            .split(' ')
+            .map {
+                it.toSortedSet().joinToString("")
+            }
+        val output = "fdgacbe cefdb cefbgd gcbe"
+            .split(' ')
+            .map {
+                it.toSortedSet().joinToString("")
+            }
+        assertEquals(8394, solver.getTranslated(digits, output))
     }
 }

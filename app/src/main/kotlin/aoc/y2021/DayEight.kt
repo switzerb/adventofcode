@@ -34,36 +34,40 @@ class DayEight(private val input: List<String>) {
         return uniques.size
     }
 
+    fun String.sort() = this.toSortedSet().joinToString("")
+
     fun getTranslated(digits: List<String>, output: List<String>): Int {
         val numbers = arrayOfNulls<String>(10)
 
-        val one = digits.find { it.length == ONE }
-        val seven = digits.find { it.length == SEVEN }
-        val four = digits.find { it.length == FOUR }
-        val eight = digits.find { it.length == EIGHT }
-        val fiveSet = digits.filter { it.length == 5 }
-        val sixSet = digits.filter { it.length == 6 }
+        val one = digits.find { it.length == ONE }?.sort()!!
+        val seven = digits.find { it.length == SEVEN }?.sort()!!
+        val four = digits.find { it.length == FOUR }?.sort()!!
+        val eight = digits.find { it.length == EIGHT }?.sort()!!
+        val fiveSet = digits.filter { it.length == 5 }.map { digit -> digit.sort() }
+        val sixSet = digits.filter { it.length == 6 }.map { digit -> digit.sort() }
 
-        val three = fiveSet.find { each -> each.toSet().containsAll(one!!.toSet()) }!!
-        val nine = sixSet.find { each -> each.toSet().containsAll(four!!.toSet()) }!!
+        val three = fiveSet.find { digit -> digit.toSet().containsAll(one.toSet()) }!!
+        val nine = sixSet.find { digit -> digit.toSet().containsAll(four.toSet()) }!!
 
         val five_or_two = fiveSet.filter { each -> each != three }
-        val missing = eight!!.toSet().subtract(nine.toSet())
-        val two = five_or_two.find { each -> each.contains(missing.first()) }
+        val six_or_zero = sixSet.filter { digit -> digit != nine }
+        val missing = eight.toSet().subtract(nine.toSet())
+        val two = five_or_two.find { each -> each.contains(missing.first()) }!!
         val five = five_or_two.find { each -> each != two }!!
-        val six = sixSet.find { each -> each.toSet().containsAll(five.toSet()) }
-        val zero = sixSet.find { each -> each != nine && each != six }
 
-        numbers[0] = zero?.toSortedSet()?.joinToString("")
-        numbers[1] = one?.toSortedSet()?.joinToString("")
-        numbers[2] = two?.toSortedSet()?.joinToString("")
-        numbers[3] = three?.toSortedSet()?.joinToString("")
-        numbers[4] = four?.toSortedSet()?.joinToString("")
-        numbers[5] = five?.toSortedSet()?.joinToString("")
-        numbers[6] = six?.toSortedSet()?.joinToString("")
-        numbers[7] = seven?.toSortedSet()?.joinToString("")
-        numbers[8] = eight?.toSortedSet()?.joinToString("")
-        numbers[9] = nine?.toSortedSet()?.joinToString("")
+        val six = six_or_zero.find { each -> each.toSet().containsAll(five.toSet()) }!!
+        val zero = six_or_zero.find { each -> each != six }!!
+
+        numbers[0] = zero.sort()
+        numbers[1] = one.sort()
+        numbers[2] = two.sort()
+        numbers[3] = three.sort()
+        numbers[4] = four.sort()
+        numbers[5] = five.sort()
+        numbers[6] = six.sort()
+        numbers[7] = seven.sort()
+        numbers[8] = eight.sort()
+        numbers[9] = nine.sort()
 
         val translated = output.map {
             numbers.indexOf(it)
@@ -81,14 +85,13 @@ class DayEight(private val input: List<String>) {
             val output = right.split(" ").map { it.trim().toSortedSet().joinToString("") }
             getTranslated(digits, output)
         }
-        println(something)
-
-        return 0
+        return something.sum()
     }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsList("day08_2021.txt")
     val solver = DayEight(input)
-    println(solver.partOne())
+//    println(solver.partOne())
+    println(solver.partTwo())
 }
