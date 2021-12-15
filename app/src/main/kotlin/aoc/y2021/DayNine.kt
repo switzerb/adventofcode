@@ -1,88 +1,71 @@
 package aoc.y2021
-import aoc.lib.Resources.fileAsList
+import aoc.lib.Point
 import aoc.lib.Resources.fileAsString
 
-data class Point(val x: Int, val y: Int) {
+typealias IntGrid = Array<IntArray>
 
-    fun neighbors(): List<Point> =
-        listOf(
-            Point(x, y + 1),
-            Point(x, y - 1),
-            Point(x + 1, y),
-            Point(x - 1, y)
-        )
+class DayNine(val input: String) {
 
-    fun allNeighbors(): List<Point> =
-        neighbors() + listOf(
-            Point(x - 1, y - 1),
-            Point(x - 1, y + 1),
-            Point(x + 1, y - 1),
-            Point(x + 1, y + 1)
-        )
-}
+    private fun String.toIntGrid() = lines().map { row ->
+        row.map { it.digitToInt() }.toIntArray()
+    }.toTypedArray()
 
-class DayNine(input: List<String>) {
+    val caves: IntGrid = input.toIntGrid()
 
-    private fun parseInput(input: List<String>): Array<IntArray> {
-        return input.map { row ->
-            row.map { it.digitToInt() }.toIntArray()
-        }.toTypedArray()
-    }
-
-    private val caves: Array<IntArray> = parseInput(input)
-
-    private fun getBasinSize(point: Point): Int {
-        val visited = mutableSetOf(point)
-        val queue = mutableListOf(point)
-        while (queue.isNotEmpty()) {
-            val newNeighbors = queue.removeFirst()
-                .actualNeighbors()
-                .filter { it !in visited }
-                .filter { caves[it] != 9 }
-            visited.addAll(newNeighbors)
-            queue.addAll(newNeighbors)
-        }
-        return visited.size
-    }
-
-    fun Point.actualNeighbors(): List<Point> =
-        neighbors().filter { it in caves }
-
-    fun Array<IntArray>.findLowPoints(): List<Point> {
-        return flatMapIndexed { y, row ->
-            row.mapIndexed { x, height ->
-                Point(x, y).takeIf { point ->
-                    point.actualNeighbors().map { caves[it] }.all { height < it }
+    fun IntGrid.findLowPoints(): List<Point> {
+        return flatMapIndexed { r, row ->
+            row.mapIndexed { c, height ->
+                Point(c, r).takeIf { point ->
+                    actualNeighbors(point)
+                        .map {
+                            caves[it]
+                        }.all { height < it }
                 }
             }.filterNotNull()
         }
     }
 
-    operator fun Array<IntArray>.get(point: Point): Int {
-        return this[point.y][point.x]
+    fun getBasinSize(point: Point): Int {
+        val visited = mutableSetOf(point)
+        val queue = mutableListOf(point)
+
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            val neighbors = actualNeighbors(current)
+                .filter { it !in visited }
+                .filter { caves[it] != 9 }
+            visited.addAll(neighbors)
+            queue.addAll(neighbors)
+        }
+        return visited.size
     }
 
-    operator fun Array<IntArray>.contains(point: Point): Boolean =
-        point.y in this.indices && point.x in this[point.y].indices
+    fun actualNeighbors(point: Point): List<Point> =
+        point.neighbors().filter { it in caves }
 
-    /**
-     * [2,1,9,9,9,4,3,2,1,0
-     *  3,9,8,7,8,9,4,9,2,1
-     *  9,8,5,6,7,8,9,8,9,2
-     *  8,7,6,7,8,9,6,7,8,9
-     *  9,8,9,9,9,6,5,6,7,8]
-     */
+    operator fun IntGrid.contains(point: Point): Boolean =
+        point.r in this.indices && point.c in this[point.r].indices
+
+    operator fun IntGrid.get(point: Point): Int = this[point.r][point.c]
+
     fun partOne(): Int {
         return caves.findLowPoints().sumOf {
             caves[it] + 1
         }
     }
 
-    fun partTwo() {}
+    fun partTwo(): Int = caves
+        .findLowPoints()
+        .map { getBasinSize(it) }
+        .sorted()
+        .takeLast(3).reduce { acc, basin ->
+            acc * basin
+        }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("day09_2021.txt")
-    val solver = DayNine(fileAsList(input))
+    val solver = DayNine(input)
     println(solver.partOne())
+    println(solver.partTwo())
 }
