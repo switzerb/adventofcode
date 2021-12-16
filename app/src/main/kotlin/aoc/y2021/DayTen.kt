@@ -8,10 +8,6 @@ class Stack {
     fun push(item: Char) = stack.add(0, item)
 
     fun pop(): Char = stack.removeAt(0)
-
-    fun peek(): Char = stack.get(0)
-
-    fun isEmpty(): Boolean = stack.size == 0
 }
 
 class DayTen(private val input: String) {
