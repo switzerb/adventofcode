@@ -1,12 +1,26 @@
 package aoc.y2021
 
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class DayTenTest {
 
+    val chunk = """
+        [({(<(())[]>[[{[]{<()<>>
+        [(()[<>])]({[<{<<[]>>(
+        {([(<{}[<>[]}>{[]{[(<()>
+        (((({<>}<{<{<>}{[]{[]{}
+        [[<[([]))<([[{}[[()]]]
+        [{[{({}]{}}([{[{{{}}([]
+        {<[[]]>}<{[{[{[]{()[[[]
+        [<(<(<(<{}))><([]([]()
+        <{([([[(<>()){}]>(<<{{
+        <{([{{}}[<[[[<>{}]]]>[]]
+    """.trimIndent()
+
     @Test
     fun test() {
-        assertTrue(true)
+        val solver = DayTen(chunk)
+        assertEquals(26397, solver.partOne())
     }
 }
