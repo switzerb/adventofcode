@@ -28,7 +28,7 @@ class DayElevenTest {
 
     @Test
     fun testStep() {
-        val solver = DayEleven(input2)
+        val solver = DayEleven(input)
         assertEquals(1656, solver.partOne())
     }
 }
