@@ -1,44 +1,48 @@
 package aoc.y2021
 import aoc.lib.Resources.fileAsString
 
-typealias Histogram = Map<String, Long>
+typealias Histogram = MutableMap<String, Long>
 class DayFourteen(private val input: String) {
 
     val template = input.lines().first().trim()
     val rules: Map<String, String> = input.parseRules()
 
     fun run(steps: Int): Long {
-        val polymer: String = template
-
         var histogram = template.toHistogram().toMutableMap()
 
-        val first = polymer.take(2)
-        val last = polymer.takeLast(2)
-
         (1..steps).forEach {
-            val next = mutableMapOf<String, Long>()
-            for (pair in histogram.keys) {
-                val element = rules[pair]!!
-                val left = "${pair.first()}$element"
-                val right = "$element${pair.last()}"
-                next[left] =
-                    next.getOrDefault(left, 0) + histogram.getOrDefault(pair, 0)
-                next[right] =
-                    next.getOrDefault(right, 0) + histogram.getOrDefault(pair, 0)
-            }
-            histogram = next
+            histogram = calculate(histogram)
         }
 
+        val elements = occurances(histogram)
+        return elements.values.maxOf { it } - elements.values.minOf { it }
+    }
+
+    fun calculate(histogram: Histogram): Histogram {
+        val next = mutableMapOf<String, Long>()
+        for (pair in histogram.keys) {
+            val element = rules[pair]!!
+            val left = "${pair.first()}$element"
+            val right = "$element${pair.last()}"
+            next[left] =
+                next.getOrDefault(left, 0) + histogram.getOrDefault(pair, 0)
+            next[right] =
+                next.getOrDefault(right, 0) + histogram.getOrDefault(pair, 0)
+        }
+        return next
+    }
+
+    fun occurances(histogram: Histogram): Map<Char, Long> {
         val elements = histogram
             .map { listOf(Pair(it.key[0], it.value)) }
             .flatten()
             .groupBy { it.first }
             .mapValues { p -> p.value.sumOf { it.second } }
             .toMutableMap()
-        elements[first[0]] = elements.getOrDefault(first[0], 0) + 1
-        elements[last[0]] = elements.getOrDefault(last[0], 0) + 1
-        elements[last[1]] = elements.getOrDefault(last[1], 0) + 1
-        return elements.values.maxOf { it } - elements.values.minOf { it }
+
+        elements[template.first()] = elements.getOrDefault(template.first(), 0) + 1
+        elements[template.last()] = elements.getOrDefault(template.last(), 0) + 1
+        return elements
     }
 
     fun partOne(): Long {
