@@ -1,80 +1,68 @@
 package aoc.y2021
 import aoc.lib.Resources.fileAsString
 
-typealias Histogram = Map<String, Int>
-
+typealias Histogram = Map<String, Long>
 class DayFourteen(private val input: String) {
 
-    val template = input.lines().first()
+    val template = input.lines().first().trim()
+    val rules: Map<String, String> = input.parseRules()
 
-    val rules: Map<String, String> = mapOf(
-        "CH" to "B",
-        "HH" to "N",
-        "CB" to "H",
-        "NH" to "C",
-        "HB" to "C",
-        "HC" to "B",
-        "HN" to "C",
-        "NN" to "C",
-        "BH" to "H",
-        "NC" to "B",
-        "NB" to "B",
-        "BN" to "B",
-        "BB" to "N",
-        "BC" to "B",
-        "CC" to "N",
-        "CN" to "C",
-    )
+    fun run(steps: Int): Long {
+        val polymer: String = template
 
-    fun run(steps: Int): Int {
-        val pairs = template.toHistogram()
-        val lastChar = template.last()
-        val expanded = (0..steps).fold(pairs) { polymer, _ ->
-            expandPolymer(polymer)
+        var histogram = template.toHistogram().toMutableMap()
+
+        val first = polymer.take(2)
+        val last = polymer.takeLast(2)
+
+        (1..steps).forEach {
+            val next = mutableMapOf<String, Long>()
+            for (pair in histogram.keys) {
+                val element = rules[pair]!!
+                val left = "${pair.first()}$element"
+                val right = "$element${pair.last()}"
+                next[left] =
+                    next.getOrDefault(left, 0) + histogram.getOrDefault(pair, 0)
+                next[right] =
+                    next.getOrDefault(right, 0) + histogram.getOrDefault(pair, 0)
+            }
+            histogram = next
         }
-        val built = buildPolymer(expanded, lastChar)
-        val counts = occurances(built)
-        println(counts)
-        return 0
+
+        val elements = histogram
+            .map { listOf(Pair(it.key[0], it.value)) }
+            .flatten()
+            .groupBy { it.first }
+            .mapValues { p -> p.value.sumOf { it.second } }
+            .toMutableMap()
+        elements[first[0]] = elements.getOrDefault(first[0], 0) + 1
+        elements[last[0]] = elements.getOrDefault(last[0], 0) + 1
+        elements[last[1]] = elements.getOrDefault(last[1], 0) + 1
+        return elements.values.maxOf { it } - elements.values.minOf { it }
     }
 
-    fun expandPolymer(histogram: Histogram): Histogram {
-        val polymer = mutableMapOf<String, Int>()
-        histogram.forEach { (pair, count) ->
-            val element = rules[pair]
-            val first_key = "${pair.first()}$element"
-            val second_key = "$element${pair.last()}"
-            polymer.put(first_key, histogram.getOrDefault(first_key, 0) + count)
-            polymer.put(second_key, histogram.getOrDefault(second_key, 0) + count)
-        }
-        return polymer
+    fun partOne(): Long {
+        return run(10)
     }
 
-    fun partOne(): Int = run(1)
+    fun partTwo(): Long = run(40)
 
-    fun buildPolymer(pairs: Histogram, lastChar: Char): String {
-        val chars = pairs.map { (pair, _) ->
-            pair.first()
-        }
-        return chars.plus(lastChar).joinToString("")
-    }
-
-    fun occurances(polymer: String): Map<Char, Int> {
-        return polymer
-            .groupingBy { it }
-            .eachCount()
-    }
-
-    fun partTwo() {}
-
-    fun String.toHistogram() = template.windowed(2, 1)
+    private fun String.toHistogram() = windowed(2, 1)
         .groupingBy { it }
         .eachCount()
-        .mapValues { it.value }
+        .mapValues { it.value.toLong() }
+
+    private fun String.parseRules() = lines()
+        .drop(2)
+        .associate { line ->
+            val (key, value) = line.split(" -> ")
+            key to value
+        }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("day14_2021.txt")
     val solver = DayFourteen(input)
-    println(solver.partOne())
+    println(solver.partOne()) // 2549
+    println(solver.partTwo()) // 2516901104210
 }
