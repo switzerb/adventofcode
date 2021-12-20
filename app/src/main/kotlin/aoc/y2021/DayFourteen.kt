@@ -1,13 +1,11 @@
 package aoc.y2021
 import aoc.lib.Resources.fileAsString
 
-typealias Histogram = Map<String, Long>
+typealias Histogram = Map<String, Int>
 
 class DayFourteen(private val input: String) {
 
-    val lastElement = 'B'
-    val template = "NNCB"
-    val start = template.toHistogram()
+    val template = input.lines().first()
 
     val rules: Map<String, String> = mapOf(
         "CH" to "B",
@@ -28,43 +26,51 @@ class DayFourteen(private val input: String) {
         "CN" to "C",
     )
 
-    fun run(steps: Int): Long {
-        return (0..steps)
-            .fold(start) { polymer, _ -> polymer.calculate() }
-            .occurances()
-            .values
-            .sorted()
-            .let { it.last() - it.first() }
-    }
-
-    fun Histogram.calculate(): Histogram {
-        val polymers = mutableMapOf<String, Long>()
-        forEach { pair, count ->
-            val element = rules.getValue(pair)
-            val inc1 = polymers.getOrDefault("${pair.first()}$element", 0L) + count
-            val inc2 = polymers.getOrDefault("$element${pair.last()}", 0L) + count
-            polymers.set("${pair.first()}$element", inc1)
-            polymers.set("$element${pair.last()}", inc2)
+    fun run(steps: Int): Int {
+        val pairs = template.toHistogram()
+        val lastChar = template.last()
+        val expanded = (0..steps).fold(pairs) { polymer, _ ->
+            expandPolymer(polymer)
         }
-        return polymers.toMap()
+        val built = buildPolymer(expanded, lastChar)
+        val counts = occurances(built)
+        println(counts)
+        return 0
     }
 
-    fun Histogram.occurances(): Map<Char, Long> {
-        return this.map { (pair, count) ->
-            pair.first() to count
+    fun expandPolymer(histogram: Histogram): Histogram {
+        val polymer = mutableMapOf<String, Int>()
+        histogram.forEach { (pair, count) ->
+            val element = rules[pair]
+            val first_key = "${pair.first()}$element"
+            val second_key = "$element${pair.last()}"
+            polymer.put(first_key, histogram.getOrDefault(first_key, 0) + count)
+            polymer.put(second_key, histogram.getOrDefault(second_key, 0) + count)
         }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.sum() + if (it.key == lastElement) 1 else 0 }
+        return polymer
     }
 
-    fun partOne(): Long = run(10)
+    fun partOne(): Int = run(1)
+
+    fun buildPolymer(pairs: Histogram, lastChar: Char): String {
+        val chars = pairs.map { (pair, _) ->
+            pair.first()
+        }
+        return chars.plus(lastChar).joinToString("")
+    }
+
+    fun occurances(polymer: String): Map<Char, Int> {
+        return polymer
+            .groupingBy { it }
+            .eachCount()
+    }
 
     fun partTwo() {}
 
     fun String.toHistogram() = template.windowed(2, 1)
         .groupingBy { it }
         .eachCount()
-        .mapValues { it.value.toLong() }
+        .mapValues { it.value }
 }
 
 fun main(args: Array<String>) {
