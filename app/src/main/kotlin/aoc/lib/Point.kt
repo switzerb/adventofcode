@@ -2,6 +2,9 @@ package aoc.lib
 
 data class Point(val x: Int, val y: Int) {
 
+    companion object {
+        val ORIGIN = Point(0,0)
+    }
     val r = y
     val c = x
 
