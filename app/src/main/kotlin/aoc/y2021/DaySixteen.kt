@@ -11,11 +11,11 @@ data class Packet(
     val subPackets: List<Packet> = emptyList()
 ) {
 
-    fun totalVersions(): Int {
+    fun sumVersions(): Int {
         if (subPackets.isEmpty()) {
             return version
         }
-        return version + subPackets.sumOf(Packet::totalVersions)
+        return version + subPackets.sumOf(Packet::sumVersions)
     }
 }
 
@@ -91,47 +91,35 @@ class DaySixteen(private val input: String) {
             )
             // operator with subPackets
         } else {
-            when (getLengthId()) {
-                0 -> {
-                    val subpacketLen = getSubPacketLen()
-                    var bits = 0
-                    val subPackets = mutableListOf<Packet>()
-
-                    while (subpacketLen > bits) {
-                        val packet = processPacket()
-                        bits += packet.totalBits
-                        subPackets.add(packet)
-                    }
-                    return Packet(
-                        version = version,
-                        type = type,
-                        totalBits = idx - startBitCount,
-                        subPackets = subPackets
-                    )
-                }
-                1 -> {
-                    val subPacketCount = getSubPacketCount()
-                    var count = 0
-                    val subPackets = mutableListOf<Packet>()
-
-                    while (subPacketCount > count) {
-                        val subPacket = processPacket()
-                        subPackets.add(subPacket)
-                        count++
-                    }
-                    return Packet(
-                        version = version,
-                        type = type,
-                        totalBits = idx - startBitCount,
-                        subPackets = subPackets
-                    )
-                }
+            val lengthId = getLengthId()
+            val subPacketLen = when (lengthId) {
+                0 -> getSubPacketLen()
+                1 -> getSubPacketCount()
+                else -> 0
             }
+            var count = 0
+            val subPackets = mutableListOf<Packet>()
+
+            while (subPacketLen > count) {
+                val packet = processPacket()
+                count += when (lengthId) {
+                    0 -> packet.totalBits
+                    1 -> 1
+                    else -> 0
+                }
+                subPackets.add(packet)
+            }
+
+            return Packet(
+                version = version,
+                type = type,
+                totalBits = idx - startBitCount,
+                subPackets = subPackets
+            )
         }
-        throw Error()
     }
 
-    fun partOne(): Int = processPacket().totalVersions()
+    fun partOne(): Int = processPacket().sumVersions()
 
     fun partTwo() {}
 }
