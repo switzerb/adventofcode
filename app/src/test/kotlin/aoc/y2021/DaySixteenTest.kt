@@ -1,34 +1,48 @@
 package aoc.y2021
 
-import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class DaySixteenTest {
 
-    val exInput = "D2FE28"
+    private val literalHex = "D2FE28"
+    private val opHex1 = "38006F45291200"
+    private val opHex2 = "8A004A801A8002F478"
+
+    @Test
+    fun testToBinary() {
+        assertEquals("110100101111111000101000", DaySixteen.toBinary(literalHex))
+    }
+
+    @Test
+    fun testProcessPacketLiteralOnly() {
+        val solver = DaySixteen(literalHex)
+        val (packet, bitCount) = solver.processPacket()
+        assertEquals(6, packet.version)
+        assertEquals(4, packet.type)
+        assertEquals(2021, packet.value)
+        assertEquals(21, bitCount)
+    }
+
+    @Test
+    fun testProcessPacketOperator() {
+        val solver = DaySixteen(opHex1)
+        val (root, bitCount) = solver.processPacket()
+        assertEquals(1, root.version)
+        assertEquals(6, root.type)
+        assertEquals(2, root.subPackets.size)
+        assertEquals(10, root.subPackets[0].value)
+        assertEquals(20, root.subPackets[1].value)
+    }
 
     @Test
     fun test() {
-        val solver = DaySixteen(exInput)
-//        110100101111111000101000
-//        VVVTTTAAAAABBBBBCCCCC
-
-        // LITERAL
-        // convert to binary should be 110100101111111000101000
-        // version 110
-        // type 100 (4), LITERAL VALUE
-        // first group - prefix + 4 bits 1-0111 (prefix one means not done)
-        // second group - prefix + 4 bits 1-1110 (prefix one means not done)
-        // third ground = prefix + 4 bits 0-0101 (prefix means last group)
-        // literal value = 0111 1110 0101
-        // convert to decimal = 2021
+        val solver = DaySixteen(literalHex)
 
         /* OPERATOR
         * 00111000000000000110111101000101001010010001001000000000
         * VVVTTTILLLLLLLLLLLLLLLAAAAAAAAAAABBBBBBBBBBBBBBBB
         *
-        * version 001
-        * type 110 (6)
         * length type ID 0 - next 15 bits are a number that represents the total length in bits of the sub-packets contained by this packet.
         * length type ID 1 - next 11 bits are a number that represents the number of sub-packets immediately contained by this packet.
         *
@@ -40,6 +54,6 @@ class DaySixteenTest {
         * packet two
         * 010 100 1 0001 0 0100 = 00010100 (literal value 20)
         */
-        assertTrue(true)
+        assertEquals(16, solver.partOne())
     }
 }
