@@ -83,4 +83,52 @@ class DaySixteenTest {
         val solver = DaySixteen(fileAsString("day16_2021.txt"))
         assertEquals(886, solver.partOne())
     }
+
+    @Test
+    fun testP2SumOperation() {
+        val solver = DaySixteen("C200B40A82")
+        assertEquals(3, solver.partTwo())
+    }
+
+    @Test
+    fun testP2MultOperation() {
+        val solver = DaySixteen("04005AC33890")
+        assertEquals(54, solver.partTwo())
+    }
+
+    @Test
+    fun testP2MinOperation() {
+        val solver = DaySixteen("880086C3E88112")
+        assertEquals(7, solver.partTwo())
+    }
+
+    @Test
+    fun testP2MaxOperation() {
+        val solver = DaySixteen("CE00C43D881120")
+        assertEquals(9, solver.partTwo())
+    }
+
+    @Test
+    fun testP2LessThanOperation() {
+        val solver = DaySixteen("D8005AC2A8F0")
+        assertEquals(1, solver.partTwo())
+    }
+
+    @Test
+    fun testP2Operation() {
+        val solver = DaySixteen("F600BC2D8F")
+        assertEquals(0, solver.partTwo())
+    }
+
+    @Test
+    fun testP2Operation2() {
+        val solver = DaySixteen("9C005AC2F8F0")
+        assertEquals(0, solver.partTwo())
+    }
+
+    @Test
+    fun testP2Operation3() {
+        val solver = DaySixteen("9C0141080250320F1802104A08")
+        assertEquals(1, solver.partTwo())
+    }
 }

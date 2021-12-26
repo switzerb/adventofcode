@@ -11,11 +11,61 @@ data class Packet(
     val subPackets: List<Packet> = emptyList()
 ) {
 
-    fun sumVersions(): Int {
-        if (subPackets.isEmpty()) {
-            return version
+    fun totalVersions(): Int = if (subPackets.isEmpty()) {
+        version
+    } else version + subPackets.sumOf(Packet::totalVersions)
+
+    private fun sumValues(): Long = subPackets.sumOf(Packet::getTotalValue)
+
+    private fun multiplyValues(): Long = subPackets.fold(1) { multi, packet ->
+        multi.times((packet.getTotalValue()))
+    }
+
+    // value is the minimum of the values of their sub-packets.
+    private fun minOfValues(): Long = subPackets.minOf(Packet::getTotalValue)
+
+    // value is the maximum of the values of their sub-packets.
+    private fun maxOfValues(): Long = subPackets.maxOf(Packet::getTotalValue)
+
+    /**
+     *  value is 1 if the value of the first > value of the second
+     *  otherwise, their value is 0. These packets always have exactly two sub-packets.
+     */
+    private fun greaterThanValues(): Long {
+        assert(subPackets.size == 2)
+        return if (subPackets.first().getTotalValue() > subPackets.last().getTotalValue()) 1 else 0
+    }
+
+    /**
+     * value is 1 if the value of the first <  value of the second
+     *  otherwise, their value is 0. These packets always have exactly two sub-packets.
+     */
+    private fun lessThanValues(): Long {
+        assert(subPackets.size == 2)
+        return if (subPackets.first().getTotalValue() < subPackets.last().getTotalValue()) 1 else 0
+    }
+
+    /** value is 1 if the value of the first == value of the second
+     * value is 0.
+     * These packets always have exactly two sub-packets.
+     */
+    private fun equalToValues(): Long {
+        assert(subPackets.size == 2)
+        return if (subPackets.first().getTotalValue() == subPackets.last().getTotalValue()) 1 else 0
+    }
+
+    fun getTotalValue(): Long {
+        return when (type) {
+            0 -> sumValues()
+            1 -> multiplyValues()
+            2 -> minOfValues()
+            3 -> maxOfValues()
+            4 -> value!!
+            5 -> greaterThanValues()
+            6 -> lessThanValues()
+            7 -> equalToValues()
+            else -> throw Error("0peration type $type is unknown")
         }
-        return version + subPackets.sumOf(Packet::sumVersions)
     }
 }
 
@@ -119,13 +169,14 @@ class DaySixteen(private val input: String) {
         }
     }
 
-    fun partOne(): Int = processPacket().sumVersions()
+    fun partOne(): Int = processPacket().totalVersions()
 
-    fun partTwo() {}
+    fun partTwo(): Long = processPacket().getTotalValue()
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("day16_2021.txt")
     val solver = DaySixteen(input)
-    println(solver.partOne())
+//    println(solver.partOne())
+    println(solver.partTwo())
 }
