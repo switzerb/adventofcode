@@ -1,5 +1,6 @@
 package aoc.y2021
 
+import aoc.lib.Resources.fileAsString
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -75,5 +76,11 @@ class DaySixteenTest {
     fun testP1Ex4() {
         val solver = DaySixteen(hex4)
         assertEquals(31, solver.partOne())
+    }
+
+    @Test
+    fun testP1Actual() {
+        val solver = DaySixteen(fileAsString("day16_2021.txt"))
+        assertEquals(886, solver.partOne())
     }
 }

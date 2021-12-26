@@ -9,7 +9,15 @@ data class Packet(
     val totalBits: Int,
     val value: Long? = null,
     val subPackets: List<Packet> = emptyList()
-)
+) {
+
+    fun totalVersions(): Int {
+        if (subPackets.isEmpty()) {
+            return version
+        }
+        return version + subPackets.sumOf(Packet::totalVersions)
+    }
+}
 
 class DaySixteen(private val input: String) {
 
@@ -55,7 +63,7 @@ class DaySixteen(private val input: String) {
         return Pair(version, type)
     }
 
-    fun getLiteralValue(): Long {
+    private fun getLiteralValue(): Long {
         var value = ""
         do {
             val prefix = message.substring(idx, inc(1)).toInt()
@@ -64,10 +72,9 @@ class DaySixteen(private val input: String) {
         return value.toLong(2)
     }
 
-    fun getSubPacketLen() = message.substring(idx, inc(15)).toInt(2)
-    fun getSubPacketCount() = message.substring(idx, inc(11)).toInt(2)
-
-    fun getLengthId(): Int = message.substring(idx, inc(1)).toInt()
+    private fun getSubPacketLen() = message.substring(idx, inc(15)).toInt(2)
+    private fun getSubPacketCount() = message.substring(idx, inc(11)).toInt(2)
+    private fun getLengthId(): Int = message.substring(idx, inc(1)).toInt()
 
     fun processPacket(): Packet {
         val startBitCount = idx
@@ -124,19 +131,7 @@ class DaySixteen(private val input: String) {
         throw Error()
     }
 
-    private fun sumVersions(packet: Packet): Int {
-        if (packet.subPackets.isEmpty()) {
-            return packet.version
-        }
-        return packet.version + packet.subPackets.sumOf { subPacket ->
-            sumVersions(subPacket)
-        }
-    }
-
-    fun partOne(): Int {
-        val root = processPacket()
-        return sumVersions(root)
-    }
+    fun partOne(): Int = processPacket().totalVersions()
 
     fun partTwo() {}
 }
