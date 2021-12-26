@@ -7,7 +7,7 @@ data class Packet(
     val version: Int,
     val type: Int,
     val totalBits: Int,
-    val value: Int? = null,
+    val value: Long? = null,
     val subPackets: List<Packet> = emptyList()
 )
 
@@ -55,13 +55,13 @@ class DaySixteen(private val input: String) {
         return Pair(version, type)
     }
 
-    fun getLiteralValue(): Int {
+    fun getLiteralValue(): Long {
         var value = ""
         do {
             val prefix = message.substring(idx, inc(1)).toInt()
             value += message.substring(idx, inc(4))
         } while (prefix != 0)
-        return value.toInt(2)
+        return value.toLong(2)
     }
 
     fun getSubPacketLen() = message.substring(idx, inc(15)).toInt(2)
@@ -124,11 +124,18 @@ class DaySixteen(private val input: String) {
         throw Error()
     }
 
+    private fun sumVersions(packet: Packet): Int {
+        if (packet.subPackets.isEmpty()) {
+            return packet.version
+        }
+        return packet.version + packet.subPackets.sumOf { subPacket ->
+            sumVersions(subPacket)
+        }
+    }
+
     fun partOne(): Int {
-        val (packet, bitCount) = processPacket()
-        // traverse tree from root node
-        println(packet)
-        return 0
+        val root = processPacket()
+        return sumVersions(root)
     }
 
     fun partTwo() {}

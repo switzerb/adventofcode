@@ -8,6 +8,10 @@ class DaySixteenTest {
     private val literalHex = "D2FE28"
     private val opHex1 = "38006F45291200"
     private val opHex2 = "EE00D40C823060"
+    private val hex1 = "8A004A801A8002F478"
+    private val hex2 = "620080001611562C8802118E34"
+    private val hex3 = "C0015000016115A2E0802F182340"
+    private val hex4 = "A0016C880162017C3686B18A3D4780"
 
     @Test
     fun testToBinary() {
@@ -50,8 +54,26 @@ class DaySixteenTest {
     }
 
     @Test
-    fun test() {
-        val solver = DaySixteen(literalHex)
+    fun testP1Ex1() {
+        val solver = DaySixteen(hex1)
         assertEquals(16, solver.partOne())
+    }
+
+    @Test
+    fun testP1Ex2() {
+        val solver = DaySixteen(hex2)
+        assertEquals(12, solver.partOne())
+    }
+
+    @Test
+    fun testP1Ex3() {
+        val solver = DaySixteen(hex3)
+        assertEquals(23, solver.partOne())
+    }
+
+    @Test
+    fun testP1Ex4() {
+        val solver = DaySixteen(hex4)
+        assertEquals(31, solver.partOne())
     }
 }
