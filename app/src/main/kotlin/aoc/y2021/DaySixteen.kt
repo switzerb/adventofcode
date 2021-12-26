@@ -6,6 +6,7 @@ import aoc.lib.Resources.fileAsString
 data class Packet(
     val version: Int,
     val type: Int,
+    val totalBits: Int,
     val value: Int? = null,
     val subPackets: List<Packet> = emptyList()
 )
@@ -64,22 +65,23 @@ class DaySixteen(private val input: String) {
     }
 
     fun getSubPacketLen() = message.substring(idx, inc(15)).toInt(2)
+    fun getSubPacketCount() = message.substring(idx, inc(11)).toInt(2)
 
     fun getLengthId(): Int = message.substring(idx, inc(1)).toInt()
 
-    fun processPacket(): Pair<Packet, Int> {
+    fun processPacket(): Packet {
         val startBitCount = idx
         val (version, type) = message.getHeaders()
 
         // literal value
         if (type == 4) {
-            val packet = Packet(
+            val literal = getLiteralValue()
+            return Packet(
                 version = version,
                 type = type,
-                value = getLiteralValue(),
+                totalBits = idx - startBitCount,
+                value = literal,
             )
-            return Pair(packet, idx - startBitCount)
-
             // operator with subPackets
         } else {
             when (getLengthId()) {
@@ -88,17 +90,34 @@ class DaySixteen(private val input: String) {
                     var bits = 0
                     val subPackets = mutableListOf<Packet>()
 
-                    while(subpacketLen > bits) {
-                        val (packet, bitCount) = processPacket()
-                        bits += bitCount
+                    while (subpacketLen > bits) {
+                        val packet = processPacket()
+                        bits += packet.totalBits
                         subPackets.add(packet)
                     }
-                    val packet = Packet(
+                    return Packet(
                         version = version,
                         type = type,
+                        totalBits = idx - startBitCount,
                         subPackets = subPackets
                     )
-                    return Pair(packet, 0)
+                }
+                1 -> {
+                    val subPacketCount = getSubPacketCount()
+                    var count = 0
+                    val subPackets = mutableListOf<Packet>()
+
+                    while (subPacketCount > count) {
+                        val subPacket = processPacket()
+                        subPackets.add(subPacket)
+                        count++
+                    }
+                    return Packet(
+                        version = version,
+                        type = type,
+                        totalBits = idx - startBitCount,
+                        subPackets = subPackets
+                    )
                 }
             }
         }
