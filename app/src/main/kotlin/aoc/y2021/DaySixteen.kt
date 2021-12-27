@@ -10,9 +10,7 @@ data class Packet(
     val value: Long? = null,
     val subPackets: List<Packet> = emptyList()
 ) {
-    fun totalVersions(): Int = if (subPackets.isEmpty()) {
-        version
-    } else version + subPackets.sumOf(Packet::totalVersions)
+    fun totalVersions(): Int = version + subPackets.sumOf(Packet::totalVersions)
 
     private fun multiplyValues(): Long = subPackets.fold(1) { multi, packet ->
         multi.times((packet.getTotalValue()))
@@ -109,7 +107,7 @@ class DaySixteen(private val input: String) {
             val subPacketLen = when (lengthId) {
                 0 -> getSubPacketLen()
                 1 -> getSubPacketCount()
-                else -> 0
+                else -> throw Error("LengthId $lengthId is unrecognized")
             }
             var count = 0
             val subPackets = mutableListOf<Packet>()
@@ -119,7 +117,7 @@ class DaySixteen(private val input: String) {
                 count += when (lengthId) {
                     0 -> packet.totalBits
                     1 -> 1
-                    else -> 0
+                    else -> throw Error("LengthId $lengthId is unrecognized")
                 }
                 subPackets.add(packet)
             }
@@ -133,14 +131,20 @@ class DaySixteen(private val input: String) {
         }
     }
 
-    fun partOne(): Int = processPacket().totalVersions()
+    fun partOne(): Int {
+        idx = 0
+        return processPacket().totalVersions()
+    }
 
-    fun partTwo(): Long = processPacket().getTotalValue()
+    fun partTwo(): Long {
+        idx = 0
+        return processPacket().getTotalValue()
+    }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("day16_2021.txt")
     val solver = DaySixteen(input)
-//    println(solver.partOne())
+    println(solver.partOne())
     println(solver.partTwo())
 }

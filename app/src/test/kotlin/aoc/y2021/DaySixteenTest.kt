@@ -122,12 +122,18 @@ class DaySixteenTest {
 
     @Test
     fun testP2Operation2() {
-        val solver = DaySixteen("9C005AC2F8F0")
-        assertEquals(0, solver.partTwo())
+        val solver = DaySixteen(fileAsString("day16_2021.txt"))
+        assertEquals(184487454837, solver.partTwo())
     }
 
     @Test
     fun testP2Operation3() {
+        val solver = DaySixteen("9C0141080250320F1802104A08")
+        assertEquals(1, solver.partTwo())
+    }
+
+    @Test
+    fun testP2Actual() {
         val solver = DaySixteen("9C0141080250320F1802104A08")
         assertEquals(1, solver.partTwo())
     }
