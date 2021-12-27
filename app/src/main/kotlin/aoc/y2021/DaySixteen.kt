@@ -10,60 +10,24 @@ data class Packet(
     val value: Long? = null,
     val subPackets: List<Packet> = emptyList()
 ) {
-
     fun totalVersions(): Int = if (subPackets.isEmpty()) {
         version
     } else version + subPackets.sumOf(Packet::totalVersions)
-
-    private fun sumValues(): Long = subPackets.sumOf(Packet::getTotalValue)
 
     private fun multiplyValues(): Long = subPackets.fold(1) { multi, packet ->
         multi.times((packet.getTotalValue()))
     }
 
-    // value is the minimum of the values of their sub-packets.
-    private fun minOfValues(): Long = subPackets.minOf(Packet::getTotalValue)
-
-    // value is the maximum of the values of their sub-packets.
-    private fun maxOfValues(): Long = subPackets.maxOf(Packet::getTotalValue)
-
-    /**
-     *  value is 1 if the value of the first > value of the second
-     *  otherwise, their value is 0. These packets always have exactly two sub-packets.
-     */
-    private fun greaterThanValues(): Long {
-        assert(subPackets.size == 2)
-        return if (subPackets.first().getTotalValue() > subPackets.last().getTotalValue()) 1 else 0
-    }
-
-    /**
-     * value is 1 if the value of the first <  value of the second
-     *  otherwise, their value is 0. These packets always have exactly two sub-packets.
-     */
-    private fun lessThanValues(): Long {
-        assert(subPackets.size == 2)
-        return if (subPackets.first().getTotalValue() < subPackets.last().getTotalValue()) 1 else 0
-    }
-
-    /** value is 1 if the value of the first == value of the second
-     * value is 0.
-     * These packets always have exactly two sub-packets.
-     */
-    private fun equalToValues(): Long {
-        assert(subPackets.size == 2)
-        return if (subPackets.first().getTotalValue() == subPackets.last().getTotalValue()) 1 else 0
-    }
-
     fun getTotalValue(): Long {
         return when (type) {
-            0 -> sumValues()
+            0 -> subPackets.sumOf(Packet::getTotalValue)
             1 -> multiplyValues()
-            2 -> minOfValues()
-            3 -> maxOfValues()
+            2 -> subPackets.minOf(Packet::getTotalValue)
+            3 -> subPackets.maxOf(Packet::getTotalValue)
             4 -> value!!
-            5 -> greaterThanValues()
-            6 -> lessThanValues()
-            7 -> equalToValues()
+            5 -> if (subPackets.first().getTotalValue() > subPackets.last().getTotalValue()) 1 else 0
+            6 -> if (subPackets.first().getTotalValue() < subPackets.last().getTotalValue()) 1 else 0
+            7 -> if (subPackets.first().getTotalValue() == subPackets.last().getTotalValue()) 1 else 0
             else -> throw Error("0peration type $type is unknown")
         }
     }
@@ -101,30 +65,30 @@ class DaySixteen(private val input: String) {
     private var idx = 0
     private val message = toBinary(input)
 
-    fun inc(n: Int): Int {
+    private fun read(n: Int = 1): Int {
         val temp = idx + n
         idx += n
         return temp
     }
 
     private fun String.getHeaders(): Pair<Int, Int> {
-        val version = substring(idx, inc(3)).toInt(2)
-        val type = substring(idx, inc(3)).toInt(2)
+        val version = substring(idx, read(3)).toInt(2)
+        val type = substring(idx, read(3)).toInt(2)
         return Pair(version, type)
     }
 
     private fun getLiteralValue(): Long {
         var value = ""
         do {
-            val prefix = message.substring(idx, inc(1)).toInt()
-            value += message.substring(idx, inc(4))
+            val prefix = message.substring(idx, read(1)).toInt()
+            value += message.substring(idx, read(4))
         } while (prefix != 0)
         return value.toLong(2)
     }
 
-    private fun getSubPacketLen() = message.substring(idx, inc(15)).toInt(2)
-    private fun getSubPacketCount() = message.substring(idx, inc(11)).toInt(2)
-    private fun getLengthId(): Int = message.substring(idx, inc(1)).toInt()
+    private fun getSubPacketLen() = message.substring(idx, read(15)).toInt(2)
+    private fun getSubPacketCount() = message.substring(idx, read(11)).toInt(2)
+    private fun getLengthId(): Int = message.substring(idx, read(1)).toInt()
 
     fun processPacket(): Packet {
         val startBitCount = idx
