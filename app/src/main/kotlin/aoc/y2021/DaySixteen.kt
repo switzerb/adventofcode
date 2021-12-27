@@ -2,7 +2,6 @@ package aoc.y2021
 
 import aoc.lib.Resources.fileAsString
 
-// Packet is a tree
 data class Packet(
     val version: Int,
     val type: Int,
@@ -12,21 +11,17 @@ data class Packet(
 ) {
     fun totalVersions(): Int = version + subPackets.sumOf(Packet::totalVersions)
 
-    private fun multiplyValues(): Long = subPackets.fold(1) { multi, packet ->
-        multi.times((packet.getTotalValue()))
-    }
-
     fun getTotalValue(): Long {
         return when (type) {
             0 -> subPackets.sumOf(Packet::getTotalValue)
-            1 -> multiplyValues()
+            1 -> subPackets.map(Packet::getTotalValue).reduce(Long::times)
             2 -> subPackets.minOf(Packet::getTotalValue)
             3 -> subPackets.maxOf(Packet::getTotalValue)
             4 -> value!!
             5 -> if (subPackets.first().getTotalValue() > subPackets.last().getTotalValue()) 1 else 0
             6 -> if (subPackets.first().getTotalValue() < subPackets.last().getTotalValue()) 1 else 0
             7 -> if (subPackets.first().getTotalValue() == subPackets.last().getTotalValue()) 1 else 0
-            else -> throw Error("0peration type $type is unknown")
+            else -> throw Error("Operation type $type is unknown")
         }
     }
 }
