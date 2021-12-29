@@ -34,7 +34,7 @@ class DaySeventeen(private val input: String) {
     fun partTwo() {}
 
     private fun String.parse(): Pair<Target, Target> {
-        val targets = "x=20..30, y=-10..-5".split(",").map { coord ->
+        val targets = input.split(",").map { coord ->
             val (min, max) = coord
                 .trim()
                 .drop(2)
