@@ -4,7 +4,10 @@ import aoc.lib.Point
 import aoc.lib.Resources.fileAsString
 import kotlin.math.abs
 
-typealias Target = IntRange
+data class Target(val xRange: IntRange, val yRange: IntRange) {
+    val xMax = xRange.last
+    val yMax = yRange.first
+}
 
 class DaySeventeen(private val input: String) {
 
@@ -13,37 +16,50 @@ class DaySeventeen(private val input: String) {
     private fun drag(x: Int): Int = if (x == 0) 0 else x - 1
     private fun gravity(y: Int): Int = y - 1
 
-    private fun inTargetArea(point: Point): Boolean = point.x in target.first && point.y in target.second
+    private fun inTargetArea(point: Point): Boolean = point.x in target.xRange && point.y in target.yRange
 
-    fun step(): Point {
+    fun launch(initial: Point): Point? {
         val position = Point.ORIGIN
-        val velocity = Point(7, 2)
         var cp = position
-        var cv = velocity
-        var inTargetArea = false
-        while (!inTargetArea) {
+        var cv = initial
+        while (true) {
             cp = Point(cp.x + cv.x, cp.y + cv.y)
             cv = Point(drag(cv.x), gravity(cv.y))
-            inTargetArea = inTargetArea(cp)
+            if (inTargetArea(cp)) {
+                return initial
+            }
+            if (cp.x > target.xMax || cp.y < target.yMax) {
+                return null
+            }
         }
-        return cp
     }
 
-    fun partOne(): Int = (abs(target.second.first) - 1 downTo 0).sum()
+    fun partOne(): Int = (abs(target.yMax) - 1 downTo 0).sum()
 
-    fun partTwo() {}
+    fun partTwo(): Int {
+        val potentials = mutableListOf<Point?>()
+        (abs(target.yMax) downTo target.yMax).map { y ->
+            (0..target.xMax).map { x ->
+                val result = launch(Point(x, y))
+                if (result != null) {
+                    potentials.add(result)
+                }
+            }
+        }
+        return potentials.size
+    }
 
-    private fun String.parse(): Pair<Target, Target> {
-        val targets = input.split(",").map { coord ->
+    private fun String.parse(): Target {
+        val (x, y) = this.split(",").map { coord ->
             val (min, max) = coord
                 .trim()
                 .drop(2)
                 .split("..").map { n ->
                     n.toInt()
                 }
-            Target(min, max)
+            IntRange(min, max)
         }
-        return Pair(targets[0], targets[1])
+        return Target(xRange = x, yRange = y)
     }
 }
 
@@ -51,4 +67,5 @@ fun main(args: Array<String>) {
     val input = fileAsString("day17_2021.txt")
     val solver = DaySeventeen(input)
     println(solver.partOne())
+    println(solver.partTwo())
 }
