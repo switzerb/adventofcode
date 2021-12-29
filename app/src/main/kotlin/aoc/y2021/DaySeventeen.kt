@@ -9,26 +9,32 @@ data class Target(val xRange: IntRange, val yRange: IntRange) {
     val yMax = yRange.first
 }
 
+data class Probe(val position: Point, val velocity: Point) {
+    private fun drag(x: Int): Int = if (x == 0) 0 else x - 1
+    private fun gravity(y: Int): Int = y - 1
+
+    fun next(): Probe = Probe(
+        position = Point(position.x + velocity.x, position.y + velocity.y),
+        velocity = Point(drag(velocity.x), gravity(velocity.y))
+    )
+}
+
 class DaySeventeen(private val input: String) {
 
     private val target = input.parse()
 
-    private fun drag(x: Int): Int = if (x == 0) 0 else x - 1
-    private fun gravity(y: Int): Int = y - 1
-
-    private fun inTargetArea(point: Point): Boolean = point.x in target.xRange && point.y in target.yRange
+    private fun inTargetArea(current: Probe): Boolean =
+        current.position.x in target.xRange &&
+            current.position.y in target.yRange
 
     fun launch(initial: Point): Point? {
-        val position = Point.ORIGIN
-        var cp = position
-        var cv = initial
+        var current = Probe(Point.ORIGIN, initial)
         while (true) {
-            cp = Point(cp.x + cv.x, cp.y + cv.y)
-            cv = Point(drag(cv.x), gravity(cv.y))
-            if (inTargetArea(cp)) {
+            current = current.next()
+            if (inTargetArea(current)) {
                 return initial
             }
-            if (cp.x > target.xMax || cp.y < target.yMax) {
+            if (current.position.x > target.xMax || current.position.y < target.yMax) {
                 return null
             }
         }
@@ -37,7 +43,7 @@ class DaySeventeen(private val input: String) {
     fun partOne(): Int = (abs(target.yMax) - 1 downTo 0).sum()
 
     fun partTwo(): Int {
-        val potentials = mutableListOf<Point?>()
+        val potentials = mutableListOf<Point>()
         (abs(target.yMax) downTo target.yMax).map { y ->
             (0..target.xMax).map { x ->
                 val result = launch(Point(x, y))
@@ -66,6 +72,6 @@ class DaySeventeen(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("day17_2021.txt")
     val solver = DaySeventeen(input)
-    println(solver.partOne())
-    println(solver.partTwo())
+    println(solver.partOne()) // 2278
+    println(solver.partTwo()) // 996
 }
