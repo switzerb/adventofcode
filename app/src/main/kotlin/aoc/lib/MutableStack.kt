@@ -1,14 +1,13 @@
 package aoc.lib
 
-import java.util.NoSuchElementException
-
 class MutableStack<E> {
 
     private val elements = mutableListOf<E>()
 
-    fun isEmpty() = elements.isEmpty()
+    val size: Int
+        get() = elements.size
 
-    fun size() = elements.size
+    fun isEmpty() = elements.isEmpty()
 
     fun push(item: E) = elements.add(item)
 
