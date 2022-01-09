@@ -1,5 +1,7 @@
 package aoc.lib
 
+import java.util.NoSuchElementException
+
 class MutableStack<E> {
 
     private val elements = mutableListOf<E>()
@@ -12,7 +14,7 @@ class MutableStack<E> {
 
     fun pop(): E {
         if (isEmpty()) {
-            throw Exception("Nothing to pop here")
+            throw NoSuchElementException("Nothing to pop here.")
         }
         return elements.removeAt(elements.size - 1)
     }
