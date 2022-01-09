@@ -25,6 +25,18 @@ data class SFNum(
         // any splitable numbers?
         return this
     }
+
+    // traverse to find regular numbers on left of tree?
+
+    fun traverse(depth: Int = 0): Int {
+        if (depth == 5) {
+            // this is how we know it needs to be exploded
+            return value!!
+        }
+        val left = left?.traverse(depth = depth + 1)
+        val right = right?.traverse(depth = depth + 1)
+        return 0
+    }
 }
 
 // Day 18: Snailfish
@@ -34,29 +46,6 @@ class DayEighteen(private val input: String) {
     // If any pair is nested inside four pairs, the leftmost such pair explodes.
     // If any regular number is 10 or greater, the leftmost such regular number splits.
     val numbers = listOf<SFNum>()
-
-    fun parse(input: String): SFNum {
-        val stack = MutableStack<SFNum>()
-        val split = input.toCharArray()
-        split.forEach { c ->
-            when {
-                c.isDigit() -> {
-                    stack.push(SFNum(value = c.digitToInt()))
-                }
-                c == ']' -> {
-                    val right = stack.pop()
-                    val left = stack.pop()
-                    stack.push(
-                        SFNum(
-                            left = left,
-                            right = right,
-                        )
-                    )
-                }
-            }
-        }
-        return stack.pop()
-    }
 
     fun partOne(): String {
         // result = add one and two
@@ -72,4 +61,27 @@ fun main(args: Array<String>) {
     val input = fileAsString("day18_2021.txt")
     val solver = DayEighteen(input)
     println(solver.partOne())
+}
+
+fun String.toSFNum(): SFNum {
+    val stack = MutableStack<SFNum>()
+    val split = toCharArray()
+    split.forEach { c ->
+        when {
+            c.isDigit() -> {
+                stack.push(SFNum(value = c.digitToInt()))
+            }
+            c == ']' -> {
+                val right = stack.pop()
+                val left = stack.pop()
+                stack.push(
+                    SFNum(
+                        left = left,
+                        right = right,
+                    )
+                )
+            }
+        }
+    }
+    return stack.pop()
 }

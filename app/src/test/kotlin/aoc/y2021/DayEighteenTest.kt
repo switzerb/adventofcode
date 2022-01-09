@@ -8,12 +8,11 @@ class DayEighteenTest {
     @Test
     fun testParse() {
         val input = "[1,2]"
-        val solver = DayEighteen(input)
         val result = SFNum(
             left = SFNum(value = 1),
             right = SFNum(value = 2)
         )
-        assertEquals(result, solver.parse(input))
+        assertEquals(result, input.toSFNum())
     }
 
     @Test
@@ -29,8 +28,32 @@ class DayEighteenTest {
             ),
             right = SFNum(value = 2)
         )
-        val solver = DayEighteen(input)
-        assertEquals(result, solver.parse(input))
+        assertEquals(result, input.toSFNum())
+    }
+
+    @Test
+    fun testParseWithMoarNesting() {
+        val input = "[[[9,8],1],[1,2]]"
+        val result = SFNum(
+            left = SFNum(
+                left = SFNum(
+                    left = SFNum(value = 9),
+                    right = SFNum(value = 8)
+                ),
+                right = SFNum(value = 1)
+            ),
+            right = SFNum(
+                left = SFNum(value = 1),
+                right = SFNum(value = 2)
+            )
+        )
+        assertEquals(result, input.toSFNum())
+    }
+
+    @Test
+    fun testTraverse() {
+        val num = "[[[[[9,8],1],2],3],4]".toSFNum()
+        assertEquals(num.traverse(), 0)
     }
 
     @Test
