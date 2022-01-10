@@ -1,6 +1,6 @@
 package aoc.y2021
 
-import aoc.lib.Resources.fileAsString
+import aoc.lib.Resources.fileAsList
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -8,14 +8,16 @@ typealias SnailFish = List<Char>
 
 // Day 18: Snailfish
 // https://adventofcode.com/2021/day/18
-class DayEighteen(private val input: String) {
+class DayEighteen(private val input: List<String>) {
+
+    val numbers = input.map { it.toSnailFishNumber() }
 
     fun add(first: SnailFish, second: SnailFish): SnailFish {
         val str = "[" + first.joinToString("") + "," + second.joinToString("") + "]"
         return str.toSnailFishNumber()
     }
 
-    fun split(number: SnailFish): SnailFish? {
+    fun split(number: SnailFish): SnailFish {
         val num = number.toMutableList()
         num.forEachIndexed { idx, token ->
             if (
@@ -32,11 +34,11 @@ class DayEighteen(private val input: String) {
                 return leftPart + pair + rightPart
             }
         }
-        return null
+        return number
     }
 
-    fun explode(number: SnailFish): SnailFish? {
-        val num = number.toMutableList()
+    fun explode(number: SnailFish): SnailFish {
+        var num = number.toList()
         var depth = 0
         num.forEachIndexed { idx, token ->
             when (token) {
@@ -44,24 +46,24 @@ class DayEighteen(private val input: String) {
                 ']' -> depth--
             }
             if (depth == 5) {
-                val leftPart = num.subList(0, idx)
-                val rightPart = num.subList(idx + 5, num.size)
                 var leftValue = 0
                 var rightValue = 0
                 val leftIdx = firstIndexOfToLeft(num, idx)
                 val rightIdx = firstIndexOfToRight(num, idx + 4)
                 if (leftIdx != null) {
                     leftValue = num[idx + 1].digitToInt() + num[leftIdx].digitToInt()
-                    num[leftIdx] = leftValue.digitToChar()
+                    val adds = leftValue.toString().toList()
+                    num = num.subList(0, leftIdx) + adds + num.subList(leftIdx + 1, num.size)
                 }
                 if (rightIdx != null) {
                     rightValue = num[idx + 3].digitToInt() + num[rightIdx].digitToInt()
-                    num[rightIdx] = rightValue.digitToChar()
+                    val adds = rightValue.toString().toList()
+                    num = num.subList(0, rightIdx) + adds + num.subList(rightIdx + 1, num.size)
                 }
-                return leftPart + '0' + rightPart
+                return num.subList(0, idx) + '0' + num.subList(idx + 5, num.size)
             }
         }
-        return null
+        return number
     }
 
     private fun firstIndexOfToLeft(number: SnailFish, startsAt: Int): Int? {
@@ -82,11 +84,31 @@ class DayEighteen(private val input: String) {
         return null
     }
 
-    fun partOne(): String {
-        // result = add one and two
-        // add result to three
-        // add result of above to four
-        return input
+    fun partOne(): Int {
+        var current = add(numbers[0], numbers[1])
+        println(current)
+        var again = true
+        do {
+            val init = current.size
+            do {
+                val s = current.size
+                current = explode(current)
+                println(current)
+            } while (current.size != s)
+
+            do {
+                val s = current.size
+                current = split(current)
+                println(current)
+            } while (current.size != s)
+
+            if (current.size == init) {
+                again = false
+            }
+        } while (again)
+
+        println(current)
+        return 0
     }
 
     fun partTwo() {}
@@ -95,30 +117,7 @@ class DayEighteen(private val input: String) {
 }
 
 fun main(args: Array<String>) {
-    val input = fileAsString("day18_2021.txt")
+    val input = fileAsList("day18_2021.txt")
     val solver = DayEighteen(input)
     println(solver.partOne())
 }
-
-// fun String.toSFNum(): SFNum {
-//    val stack = MutableStack<SFNum>()
-//    val split = toCharArray()
-//    split.forEach { c ->
-//        when {
-//            c.isDigit() -> {
-//                stack.push(SFNum(value = c.digitToInt()))
-//            }
-//            c == ']' -> {
-//                val right = stack.pop()
-//                val left = stack.pop()
-//                stack.push(
-//                    SFNum(
-//                        left = left,
-//                        right = right,
-//                    )
-//                )
-//            }
-//        }
-//    }
-//    return stack.pop()
-// }
