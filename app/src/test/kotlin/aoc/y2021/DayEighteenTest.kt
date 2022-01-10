@@ -49,4 +49,18 @@ class DayEighteenTest {
         val result = "[[3,[2,[8,0]]],[9,[5,[7,0]]]]".toList()
         assertEquals(result, solver.explode(number))
     }
+
+    @Test
+    fun testSplit1() {
+        val number = "[[[[0,7],4],[15,[0,13]]],[1,1]]".toList()
+        val result = "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]".toList()
+        assertEquals(result, solver.split(number))
+    }
+
+    @Test
+    fun testSplit2() {
+        val number = "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]".toList()
+        val result = "[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]".toList()
+        assertEquals(result, solver.split(number))
+    }
 }

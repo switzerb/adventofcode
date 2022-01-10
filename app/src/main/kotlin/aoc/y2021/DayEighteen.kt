@@ -1,6 +1,8 @@
 package aoc.y2021
 
 import aoc.lib.Resources.fileAsString
+import kotlin.math.ceil
+import kotlin.math.floor
 
 typealias SnailFish = List<Char>
 
@@ -11,6 +13,26 @@ class DayEighteen(private val input: String) {
     fun add(first: SnailFish, second: SnailFish): SnailFish {
         val str = "[" + first.joinToString("") + "," + second.joinToString("") + "]"
         return str.toSnailFishNumber()
+    }
+
+    fun split(number: SnailFish): SnailFish? {
+        val num = number.toMutableList()
+        num.forEachIndexed { idx, token ->
+            if (
+                idx < num.size - 1 &&
+                token.isDigit() &&
+                num[idx + 1].isDigit()
+            ) {
+                val leftPart = num.subList(0, idx)
+                val rightPart = num.subList(idx + 2, num.size)
+                val value = (num[idx].toString() + num[idx + 1].toString()).toInt()
+                val left = floor((value.toDouble() / 2)).toInt()
+                val right = ceil((value.toDouble() / 2)).toInt()
+                val pair = listOf('[', left.digitToChar(), ',', right.digitToChar(), ']')
+                return leftPart + pair + rightPart
+            }
+        }
+        return null
     }
 
     fun explode(number: SnailFish): SnailFish? {
@@ -42,7 +64,7 @@ class DayEighteen(private val input: String) {
         return null
     }
 
-    fun firstIndexOfToLeft(number: SnailFish, startsAt: Int): Int? {
+    private fun firstIndexOfToLeft(number: SnailFish, startsAt: Int): Int? {
         (startsAt downTo 0).forEach { i ->
             if (number[i].isDigit()) {
                 return i
@@ -51,7 +73,7 @@ class DayEighteen(private val input: String) {
         return null
     }
 
-    fun firstIndexOfToRight(number: SnailFish, startsAt: Int): Int? {
+    private fun firstIndexOfToRight(number: SnailFish, startsAt: Int): Int? {
         (startsAt until number.size).forEach { i ->
             if (number[i].isDigit()) {
                 return i
