@@ -11,7 +11,7 @@ typealias SnailFish = List<String>
 // https://adventofcode.com/2021/day/18
 class DayEighteen(private val input: List<String>) {
 
-    val numbers = input.map { it.toSnailFishNumber() }
+    private val numbers = input.map { it.toSnailFishNumber() }
 
     fun add(first: SnailFish, second: SnailFish): SnailFish {
         val str = "[" + first.joinToString("") + "," + second.joinToString("") + "]"
@@ -121,7 +121,33 @@ class DayEighteen(private val input: List<String>) {
         return getMagnitude(summed)
     }
 
-    fun partTwo() {}
+    fun buildPairs(): List<Pair<SnailFish, SnailFish>> {
+        val potentials: MutableList<Pair<SnailFish, SnailFish>> = mutableListOf()
+        numbers.indices.forEach { outer ->
+            (outer + 1 until numbers.size).forEach { inner ->
+                potentials.add(Pair(numbers[outer], numbers[inner]))
+            }
+        }
+        return potentials.toList()
+    }
+
+    fun partTwo(): Int {
+        var maxMagnitude = 0
+        val potentials = buildPairs()
+        potentials.forEach { pair ->
+            val sum = reduce(pair.first, pair.second)
+            val magnitude = getMagnitude(sum)
+            if (magnitude > maxMagnitude) {
+                maxMagnitude = magnitude
+            }
+            val sumReversed = reduce(pair.second, pair.first)
+            val magnitudeReversed = getMagnitude(sumReversed)
+            if (magnitudeReversed > maxMagnitude) {
+                maxMagnitude = magnitudeReversed
+            }
+        }
+        return maxMagnitude
+    }
 
     private fun String.toSnailFishNumber() = split("")
 }
@@ -129,5 +155,6 @@ class DayEighteen(private val input: List<String>) {
 fun main(args: Array<String>) {
     val input = fileAsList("day18_2021.txt")
     val solver = DayEighteen(input)
-    println(solver.partOne())
+    println(solver.partOne()) // 3524
+    println(solver.partTwo()) // 4656
 }
