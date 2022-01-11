@@ -1,5 +1,6 @@
 package aoc.y2021
 
+import aoc.lib.MutableStack
 import aoc.lib.Resources.fileAsList
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -62,7 +63,7 @@ class DayEighteen(private val input: List<String>) {
 
     private fun firstIndexOfToLeft(number: SnailFish, startsAt: Int): Int? {
         (startsAt downTo 0).forEach { i ->
-            if (number[i].toIntOrNull() != null) {
+            if (number[i].isNumber()) {
                 return i
             }
         }
@@ -71,15 +72,15 @@ class DayEighteen(private val input: List<String>) {
 
     private fun firstIndexOfToRight(number: SnailFish, startsAt: Int): Int? {
         (startsAt until number.size).forEach { i ->
-            if (number[i].toIntOrNull() != null) {
+            if (number[i].isNumber()) {
                 return i
             }
         }
         return null
     }
 
-    fun partOne(): Int {
-        var current = add(numbers[0], numbers[1])
+    fun reduce(first: SnailFish, second: SnailFish): SnailFish {
+        var current = add(first, second)
         while (true) {
             val size = current.size
             current = explode(current)
@@ -91,8 +92,33 @@ class DayEighteen(private val input: List<String>) {
                 break
             }
         }
-        println(current)
-        return 0
+        return current
+    }
+
+    fun sum(): SnailFish = numbers.reduce(this::reduce)
+
+    private fun String.isNumber() = toIntOrNull() != null
+
+    fun getMagnitude(number: SnailFish): Int {
+        val ops = MutableStack<String>()
+        val nums = MutableStack<Int>()
+        number.forEach { token ->
+            when {
+                token == "[" -> ops.push(token)
+                token.isNumber() -> nums.push(token.toInt())
+                token == "]" -> {
+                    val value = 2 * nums.pop() + 3 * nums.pop()
+                    nums.push(value)
+                    ops.pop()
+                }
+            }
+        }
+        return nums.pop()
+    }
+
+    fun partOne(): Int {
+        val summed = sum()
+        return getMagnitude(summed)
     }
 
     fun partTwo() {}
