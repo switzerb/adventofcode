@@ -10,7 +10,7 @@ val day =
     else "00"
 val year =
     if (args.contains("-y")) args[1 + args.indexOf("-y")]
-    else "2021"
+    else "2022"
 
 data class AocDay(
     val base: String,
@@ -28,8 +28,8 @@ data class AocDay(
     val dayAsName = "Day${dayTranslated(day)}"
     val src_file = File("$base_src/y$year/$dayAsName.kt")
     val test_file = File("$base_test/y$year/${dayAsName}Test.kt")
-    val input_src_file = File("$base_src_resources/day${day}_$year.txt")
-    val input_test_file = File("$base_test_resources/day${day}_$year.txt")
+    val input_src_file = File("$base_src_resources/$year/day${day}_$year.txt")
+    val input_test_file = File("$base_test_resources/$year/day${day}_$year.txt")
 
     val mainText = """
     package aoc.y$year
@@ -45,7 +45,7 @@ data class AocDay(
     }
 
     fun main(args: Array<String>) {
-        val input = fileAsString("day${day}_$year.txt")
+        val input = fileAsString("$year/day${day}_$year.txt")
         val solver = $dayAsName(input)
         println(solver.partOne())
     }
