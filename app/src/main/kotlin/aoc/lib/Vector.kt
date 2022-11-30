@@ -43,10 +43,10 @@ class Vector {
         this.coords.add(z)
     }
 
-    fun get(dimension: Int): Int = coords[dimension]
-    fun x(): Int = get(0)
-    fun y(): Int = get(1)
-    fun z(): Int = get(2)
+    operator fun get(dimension: Int): Int = coords[dimension]
+    fun x(): Int = coords[0]
+    fun y(): Int = coords[1]
+    fun z(): Int = coords[2]
 
     fun getManhattanDistance(other: Vector) = abs(x() - other.x()) + abs(y() - other.y())
 
@@ -64,7 +64,9 @@ class Vector {
     fun neighbors(): List<Vector> = adjacentDeltas(coords.size).map { it + this }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is Vector) { return false }
+        if (other !is Vector) {
+            return false
+        }
         return this.coords == other.coords
     }
 
