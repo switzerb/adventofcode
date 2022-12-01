@@ -27,7 +27,7 @@ object Resources {
     fun fileAsInts(fileName: String): List<Int> =
         fileAsList(fileName).map { it.toInt() }
 
-    fun fileAsString(fileName: String): String = File(fileName.toURI()).readText()
+    fun fileAsString(fileName: String): String = File(fileName.toURI()).readText().trim()
 
     private fun String.toURI(): URI =
             Resources::class.java.classLoader.getResource(this)?.toURI() ?: throw IllegalArgumentException("No resource found: $this")

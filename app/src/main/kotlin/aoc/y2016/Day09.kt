@@ -10,32 +10,27 @@ https://adventofcode.com/2016/day/9
 class Day09(private val input: String) {
 
     fun partOne(): Int {
-        /*
-        ADVENT
-        A(1x5)BC
-        (3x3)XYZ
-        (6x1)(1x3)A
-        it's a marker unless it follows another marker
-         */
-        val MARKLEN = 5
-        var idx = 0
         var runningLength = input.length
-        for (char in input) {
-            when (char) {
-                '(' -> {
-                    if (idx != 0 && input[idx - 1] == ')') {
-                        break
-                    }
-                    val charCount = input[idx + 1].digitToInt()
-                    val reps = input[idx + 3].digitToInt()
-                    runningLength += (charCount * reps)
-                    runningLength -= (MARKLEN + charCount)
-                    idx += MARKLEN
-                }
-            }
-            idx++
-        }
+        var current = 0
 
+        while (true) {
+            val idx_open = input.indexOf('(', current)
+            if (idx_open == -1) {
+                break
+            }
+            val idx_close = input.indexOf(')', idx_open)
+
+            val marker = input.substring(idx_open + 1, idx_close)
+
+            // get the numbers that we need to operate with
+            val (charLen, reps) = marker.split('x').map { it.toInt() }
+
+            // add the total length of the chars that we are adding
+            runningLength += (charLen * reps)
+            // subtract the length of the marker, plus the following characters, plus the parens
+            runningLength -= (marker.length + charLen + 2)
+            current += idx_close + charLen + 1
+        }
         return runningLength
     }
 }
@@ -43,5 +38,7 @@ class Day09(private val input: String) {
 fun main(args: Array<String>) {
     val input = Resources.fileAsString("2016/input_day09.txt")
     val solver = Day09(input)
+
+    // 26332 - incorrect, too low
     println(solver.partOne())
 }
