@@ -19,10 +19,10 @@ object Resources {
     fun rawAsLongs(input: String): List<Long> = rawAsList(input).map { it.toLong() }
 
     fun fileAsList(fileName: String): List<String> =
-            File(fileName.toURI()).readLines()
+        File(fileName.toURI()).readLines()
 
     fun fileAsLongs(fileName: String): List<Long> =
-            fileAsList(fileName).map { it.toLong() }
+        fileAsList(fileName).map { it.toLong() }
 
     fun fileAsInts(fileName: String): List<Int> =
         fileAsList(fileName).map { it.toInt() }
@@ -30,5 +30,5 @@ object Resources {
     fun fileAsString(fileName: String): String = File(fileName.toURI()).readText().trim()
 
     private fun String.toURI(): URI =
-            Resources::class.java.classLoader.getResource(this)?.toURI() ?: throw IllegalArgumentException("No resource found: $this")
+        Resources::class.java.classLoader.getResource(this)?.toURI() ?: throw IllegalArgumentException("No resource found: $this")
 }
