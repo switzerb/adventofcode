@@ -18,11 +18,24 @@ class DaySix(private val input: String) {
         return count + 1
     }
 
-    fun partTwo() {}
+    fun partTwo(): Int {
+        val slices = input.windowed(size = 14, step = 1)
+        var count = 13
+        for (slice in slices) {
+            val set = slice.toSet()
+            if (set.size != 14) {
+                count += 1
+            } else {
+                break
+            }
+        }
+        return count + 1
+    }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day06_2022.txt")
     val solver = DaySix(input)
     println(solver.partOne())
+    println(solver.partTwo())
 }
