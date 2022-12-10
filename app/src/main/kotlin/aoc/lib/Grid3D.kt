@@ -1,7 +1,8 @@
-import aoc.lib.Vector
+package aoc.lib
+
 import kotlin.Int.Companion.MAX_VALUE
 
-class Grid {
+class Grid3D {
     var grid: List<Vector> = mutableListOf()
 
     /** dimensions: 0 = x, 1 = y, 2 = z **/
