@@ -10,8 +10,6 @@ class DayTen(private val input: List<String>) {
     private val CYCLE_MARK = listOf(20, 60, 100, 140, 180, 220)
 
     private val instructions = buildList {
-        // ensure our index starts at 1
-        add(Action("noop", 0))
         for (instr in input) {
             val info = instr.split(" ")
             when (info.first()) {
@@ -37,38 +35,31 @@ class DayTen(private val input: List<String>) {
             if (cycle in CYCLE_MARK) {
                 signals.add(cycle * X)
             }
-            val action = instructions[cycle]
+            val action = instructions[cycle - 1]
             X = step(X, action)
         }
         return signals.sum()
     }
 
-    /*
-     * XXX
-     * If the sprite is positioned such that one of its three pixels
-     * is the pixel currently being drawn, the screen produces
-     * a lit pixel (#); otherwise, the screen leaves the pixel
-     * dark (.).
-     */
-    fun partTwo(): Boolean {
+    fun partTwo() = buildString {
         var X = 1
         var pixelBit = 0
+
         for (cycle in 1..240) {
             val sprite = listOf(X - 1, X, X + 1)
             if (pixelBit in sprite) {
-                print("# ")
+                append("#")
             } else {
-                print(". ")
+                append(".")
             }
-            val action = instructions[cycle]
+            val action = instructions[cycle - 1]
             X = step(X, action)
             pixelBit++
-            if (cycle % 40 == 0) {
-                println()
+            if (cycle % CRT_WIDTH == 0) {
+                append("\n")
                 pixelBit = 0
             }
         }
-        return true
     }
 }
 

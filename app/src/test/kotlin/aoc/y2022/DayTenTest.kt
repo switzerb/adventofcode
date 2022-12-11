@@ -3,7 +3,6 @@ package aoc.y2022
 import aoc.lib.Resources.fileAsList
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class DayTenTest {
 
@@ -14,6 +13,15 @@ class DayTenTest {
 
     @Test
     fun test_p2e1() {
-        assertTrue(solver.partTwo())
+        val expected = """
+            ##..##..##..##..##..##..##..##..##..##..
+            ###...###...###...###...###...###...###.
+            ####....####....####....####....####....
+            #####.....#####.....#####.....#####.....
+            ######......######......######......####
+            #######.......#######.......#######.....
+            
+        """.trimIndent()
+        assertEquals(expected, solver.partTwo())
     }
 }
