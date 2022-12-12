@@ -1,4 +1,5 @@
 package aoc.y2021
+
 import aoc.lib.Point
 import aoc.lib.Resources.fileAsString
 import java.util.PriorityQueue
@@ -27,7 +28,6 @@ class DayFifteen(input: String) {
     private fun Array<IntArray>.run(
         end: Point
     ): Int? {
-
         val queue = PriorityQueue<Path>()
         queue.add(Path(Point.ORIGIN, 0))
         val visited = mutableSetOf<Point>()
@@ -40,7 +40,7 @@ class DayFifteen(input: String) {
             if (current.point !in visited) {
                 visited.add(current.point)
                 current.point
-                    .neighbors()
+                    .cardinalNeighbors()
                     .filter { (it.x in (0..end.x)) && (it.y in (0..end.y)) }
                     .forEach { queue.add(Path(it, current.risk + getRisk(it))) }
             }

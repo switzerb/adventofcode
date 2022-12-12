@@ -1,4 +1,5 @@
 package aoc.y2021
+
 import aoc.lib.Point
 import aoc.lib.Resources.fileAsString
 
@@ -41,7 +42,7 @@ class DayNine(val input: String) {
     }
 
     fun actualNeighbors(point: Point): List<Point> =
-        point.neighbors().filter { it in caves }
+        point.cardinalNeighbors().filter { it in caves }
 
     operator fun IntGrid.contains(point: Point): Boolean =
         point.r in this.indices && point.c in this[point.r].indices

@@ -1,4 +1,5 @@
 package aoc.y2021
+
 import aoc.lib.Point
 import aoc.lib.Resources.fileAsString
 
@@ -19,9 +20,8 @@ class DayEleven(private val input: String) {
             do {
                 val flashed = octopii.filterValues { it > 9 }.keys
                 flashed.forEach { point -> octopii[point] = 0 }
-                flashed.flatMap {
-                    point ->
-                    point.neighborsWithDiags()
+                flashed.flatMap { point ->
+                    point.allNeighbors()
                 }.filter { point ->
                     point in octopii && octopii[point] != 0
                 }.forEach { point ->
