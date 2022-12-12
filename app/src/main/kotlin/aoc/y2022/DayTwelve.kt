@@ -13,23 +13,25 @@ class DayTwelve(private val input: List<String>) {
         val start: Point,
         val end: Point
     ) {
-        private data class Effort(
+        private data class PathLength(
             val point: Point,
             val cost: Int
-        ) : Comparable<Effort> {
-            override fun compareTo(other: Effort): Int =
+        ) : Comparable<PathLength> {
+            override fun compareTo(other: PathLength): Int =
                 this.cost.compareTo(other.cost)
         }
 
-        private fun canMove(from: Int, to: Int) = to - from <= 1
-
         fun shortestPath(
             begin: Point,
+            canMove: (Int, Int) -> Boolean,
             isEndGoal: (Point) -> Boolean
         ): Int {
+            // track visited points
             val visited = mutableSetOf<Point>()
-            val pq = PriorityQueue<Effort>()
-            pq.add(Effort(begin, 0))
+
+            // path length starts at 0 at beginning
+            val pq = PriorityQueue<PathLength>()
+            pq.add(PathLength(begin, 0))
 
             while (pq.isNotEmpty()) {
                 val next = pq.poll()
@@ -42,14 +44,14 @@ class DayTwelve(private val input: List<String>) {
                         .filter { it in elevations }
                         .filter {
                             canMove(
-                                from = elevations.getValue(next.point),
-                                to = elevations.getValue(it)
+                                elevations.getValue(next.point),
+                                elevations.getValue(it)
                             )
                         }
 
                     // if any of our neighbors are the goal, return the cost
                     if (neighbors.any { isEndGoal(it) }) return next.cost + 1
-                    pq.addAll(neighbors.map { Effort(it, next.cost + 1) })
+                    pq.addAll(neighbors.map { PathLength(it, next.cost + 1) })
                 }
             }
             throw IllegalStateException("No valid path found.")
@@ -85,11 +87,13 @@ class DayTwelve(private val input: List<String>) {
      */
     fun partOne(): Int = elevationMap.shortestPath(
         begin = elevationMap.start,
+        canMove = { from: Int, to: Int -> to - from <= 1 },
         isEndGoal = { it == elevationMap.end }
     )
 
     fun partTwo(): Int = elevationMap.shortestPath(
         begin = elevationMap.end,
+        canMove = { from: Int, to: Int -> from - to <= 1 },
         isEndGoal = { elevationMap.elevations[it] == 0 }
     )
 }

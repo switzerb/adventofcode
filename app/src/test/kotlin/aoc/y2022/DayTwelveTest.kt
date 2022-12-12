@@ -21,8 +21,20 @@ class DayTwelveTest {
     }
 
     @Test
+    fun test_p2e1() {
+        val solver = DayTwelve(input)
+        assertEquals(29, solver.partTwo())
+    }
+
+    @Test
     fun test_p1_actual() {
         val solver = DayTwelve(fileAsList("2022/day12_2022.txt"))
         assertEquals(447, solver.partOne())
+    }
+
+    @Test
+    fun test_p2_actual() {
+        val solver = DayTwelve(fileAsList("2022/day12_2022.txt"))
+        assertEquals(446, solver.partTwo())
     }
 }
