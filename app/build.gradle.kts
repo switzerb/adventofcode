@@ -9,7 +9,6 @@ group = "me.brennaswitzer"
 version = "1.0-SNAPSHOT"
 
 repositories {
-    jcenter()
     mavenCentral()
 }
 
@@ -23,6 +22,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation("com.google.guava:guava:29.0-jre")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("junit:junit:4.12")
 
     // Use the Kotlin test library.
