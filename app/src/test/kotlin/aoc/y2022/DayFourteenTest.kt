@@ -13,7 +13,12 @@ class DayFourteenTest {
     val solver = DayFourteen(input)
 
     @Test
-    fun test() {
+    fun t1_p1() {
         assertEquals(24, solver.partOne())
+    }
+
+    @Test
+    fun t1_p2() {
+        assertEquals(99, solver.partTwo())
     }
 }

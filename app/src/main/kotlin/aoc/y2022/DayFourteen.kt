@@ -9,54 +9,16 @@ class Cave(
     val sandAtRest: MutableList<Position> = mutableListOf(),
     var falling: Position? = null
 ) {
-    fun maxX(): Int {
-        if (rocks.isEmpty()) return 0
-        var max = 0
-        rocks.map {
-            if (it.x > max) {
-                max = it.x
-            }
-        }
-        return max
-    }
 
-    fun maxY(): Int {
-        if (rocks.isEmpty()) return 0
-        var max = 0
-        rocks.map {
-            if (it.y > max) {
-                max = it.y
-            }
-        }
-        return max
-    }
-
-    fun minX(): Int {
-        if (rocks.isEmpty()) return 0
-        var min = Int.MAX_VALUE
-        rocks.map {
-            if (it.x < min) {
-                min = it.x
-            }
-        }
-        return if (min == Int.MAX_VALUE) 0 else min
-    }
-
-    fun minY(): Int {
-        if (rocks.isEmpty()) return 0
-        var min = Int.MAX_VALUE
-        rocks.map {
-            if (it.y < min) {
-                min = it.y
-            }
-        }
-        return if (min == Int.MAX_VALUE) 0 else min
-    }
+    fun maxX(): Int = rocks.map { it.x }.maxOrNull() ?: 0
+    fun maxY(): Int = rocks.map { it.y }.maxOrNull() ?: 0
+    fun minX(): Int = rocks.map { it.x }.minOrNull() ?: 0
+    fun minY(): Int = rocks.map { it.y }.minOrNull() ?: 0
 
     override fun toString(): String {
         val string = StringBuilder()
-        (minY()..maxY()).map { y ->
-            (minX()..maxX()).map { x ->
+        (minY() - 10..maxY() + 5).map { y ->
+            (minX() - 20..maxX() + 10).map { x ->
                 if (rocks.contains(Position(x, y))) {
                     string.append("#")
                 } else if (sandAtRest.contains(Position(x, y))) {
@@ -75,57 +37,111 @@ class Cave(
 
 class DayFourteen(private val input: String) {
 
-    val cave = Cave(
-        rocks = mutableListOf(
-            Position(498, 4),
-            Position(498, 5),
-            Position(498, 6),
-            Position(497, 6),
-            Position(496, 6),
-            Position(503, 4),
-            Position(502, 4),
-            Position(502, 5),
-            Position(502, 6),
-            Position(502, 7),
-            Position(502, 8),
-            Position(502, 9),
-            Position(501, 9),
-            Position(500, 9),
-            Position(499, 9),
-            Position(498, 9),
-            Position(497, 9),
-            Position(496, 9),
-            Position(495, 9),
-            Position(494, 9)
-        )
-    )
+    fun parsed(): MutableList<Position> = input
+        .split("\n")
+        .flatMap { row ->
+            row.split(" -> ")
+                .map { coord -> Position.from(coord) }
+                .zipWithNext()
+                .flatMap { (start, end) ->
+                    start.lineTo(end)
+                }
+        }.toMutableList()
 
-    fun canMoveDown(sand: Position): Boolean = !cave.rocks.contains(Position(sand.x, sand.y + 1))
+    val cave = Cave(rocks = parsed())
+    val bottom: Int = cave.maxY() + 2
 
-    fun partOne(): Int {
-        var count = 0
-        var current = Position(500, 0)
-        println(cave)
-//        while (sand.y < cave.maxY()) {
-        while (canMoveDown(current)) {
-            cave.falling = current.moveBy(Direction.SOUTH, 1)
-            current = cave.falling!!
-            println(cave)
+    fun canMoveLeft(sand: Position): Boolean {
+        val next = Position(sand.x - 1, sand.y + 1)
+        if (cave.rocks.contains(next) || cave.sandAtRest.contains(next)) {
+            return false
         }
-//        }
-        // while sand Y point is smaller than max Y
-        // while sand can move,
-        // move it
-        // start new sand
-        return count
+        return true
     }
 
-    fun partTwo() {}
+    fun canMoveRight(sand: Position): Boolean {
+        val next = Position(sand.x + 1, sand.y + 1)
+        if (cave.rocks.contains(next) || cave.sandAtRest.contains(next)) {
+            return false
+        }
+        return true
+    }
+
+    fun canMoveDown(sand: Position): Boolean {
+        val next = Position(sand.x, sand.y + 1)
+        if (
+            cave.rocks.contains(next) ||
+            cave.sandAtRest.contains(next)
+        ) {
+            return false
+        }
+        return true
+    }
+
+    fun canMove(sand: Position): Boolean {
+        return canMoveDown(sand) ||
+            canMoveLeft(sand) ||
+            canMoveRight(sand)
+    }
+
+    fun move(sand: Position): Position {
+        val down = sand.moveBy(Direction.SOUTH, 1)
+        if (canMoveDown(sand)) {
+            return down
+        }
+        if (canMoveLeft(sand)) {
+            return down.moveBy(Direction.EAST, 1)
+        }
+        if (canMoveRight(sand)) {
+            return down.moveBy(Direction.WEST, 1)
+        }
+        throw UnsupportedOperationException("we should never get here")
+    }
+
+    fun partOne(): Int {
+        val origin = Position(500, 0)
+        var current = origin
+        var void = false
+        while (!void) {
+            while (canMove(current) && !void) {
+                cave.falling = move(current)
+                current = cave.falling!!
+                if (current.y > cave.maxY()) {
+                    void = true
+                }
+            }
+            cave.sandAtRest.add(current)
+//            println(cave)
+            current = origin
+        }
+        return cave.sandAtRest.size - 1
+    }
+
+    fun partTwo(): Int {
+        val origin = Position(500, 0)
+        var current = origin
+        var void = false
+        while (!void) {
+            while (canMove(current) && !void) {
+                cave.falling = move(current)
+                current = cave.falling!!
+                if (current.y > bottom) {
+                    void = true
+                }
+                if (current.y == bottom - 1) {
+                    break
+                }
+            }
+            cave.sandAtRest.add(current)
+            println(cave)
+            current = origin
+        }
+        return cave.sandAtRest.size - 1
+    }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day14_2022.txt")
-    val start = Position(500, 0)
     val solver = DayFourteen(input)
     println(solver.partOne())
 }

@@ -1,6 +1,8 @@
 package aoc.lib
 
 import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 data class Position(val x: Int, val y: Int) {
 
@@ -38,7 +40,17 @@ data class Position(val x: Int, val y: Int) {
     fun isSouthEastOf(other: Position): Boolean = y > other.y && x < other.x
     fun isNorthEastOf(other: Position): Boolean = y < other.y && x < other.x
 
+    fun lineTo(other: Position): List<Position> {
+        val xDelta = (other.x - x).sign
+        val yDelta = (other.y - y).sign
+        val steps = maxOf((x - other.x).absoluteValue, (y - other.y).absoluteValue)
+        return (1..steps).scan(this) { last, _ -> Position(last.x + xDelta, last.y + yDelta) }
+    }
+
     companion object {
         val ORIGIN = Position(0, 0)
+
+        fun from(input: String): Position =
+            input.split(",").let { (x, y) -> Position(x.toInt(), y.toInt()) }
     }
 }
