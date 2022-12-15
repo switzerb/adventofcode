@@ -5,8 +5,8 @@ import aoc.lib.Position
 import aoc.lib.Resources.fileAsString
 
 class Cave(
-    val rocks: MutableList<Position>,
-    val sandAtRest: MutableList<Position> = mutableListOf(),
+    val rocks: MutableSet<Position>,
+    val sandAtRest: MutableSet<Position> = mutableSetOf(),
     var falling: Position? = null
 ) {
 
@@ -37,7 +37,7 @@ class Cave(
 
 class DayFourteen(private val input: String) {
 
-    fun parsed(): MutableList<Position> = input
+    fun parsed(): MutableSet<Position> = input
         .split("\n")
         .flatMap { row ->
             row.split(" -> ")
@@ -46,10 +46,9 @@ class DayFourteen(private val input: String) {
                 .flatMap { (start, end) ->
                     start.lineTo(end)
                 }
-        }.toMutableList()
+        }.toMutableSet()
 
     val cave = Cave(rocks = parsed())
-    val bottom: Int = cave.maxY() + 2
 
     fun canMoveLeft(sand: Position): Boolean {
         val next = Position(sand.x - 1, sand.y + 1)
@@ -118,30 +117,33 @@ class DayFourteen(private val input: String) {
     }
 
     fun partTwo(): Int {
+        cave.rocks.addAll(
+            Position(
+                cave.minX() - cave.maxY(),
+                cave.maxY() + 2
+            ).lineTo(Position(cave.maxX() + cave.maxY(), cave.maxY() + 2))
+        )
         val origin = Position(500, 0)
         var current = origin
         var void = false
         while (!void) {
-            while (canMove(current) && !void) {
+            if (cave.sandAtRest.contains(origin)) {
+                void = true
+            }
+            while (canMove(current)) {
                 cave.falling = move(current)
                 current = cave.falling!!
-                if (current.y > bottom) {
-                    void = true
-                }
-                if (current.y == bottom - 1) {
-                    break
-                }
             }
             cave.sandAtRest.add(current)
-            println(cave)
             current = origin
         }
-        return cave.sandAtRest.size - 1
+        return cave.sandAtRest.size
     }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day14_2022.txt")
     val solver = DayFourteen(input)
-    println(solver.partOne())
+//    println(solver.partOne())
+    println(solver.partTwo())
 }

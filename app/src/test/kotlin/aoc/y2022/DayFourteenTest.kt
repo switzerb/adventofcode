@@ -19,6 +19,6 @@ class DayFourteenTest {
 
     @Test
     fun t1_p2() {
-        assertEquals(99, solver.partTwo())
+        assertEquals(93, solver.partTwo())
     }
 }
