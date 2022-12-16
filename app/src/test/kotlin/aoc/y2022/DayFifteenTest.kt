@@ -1,30 +1,37 @@
 package aoc.y2022
 
+import aoc.lib.Position
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class DayFifteenTest {
 
-    val input = """
-        Sensor at x=2, y=18: closest beacon is at x=-2, y=15
-        Sensor at x=9, y=16: closest beacon is at x=10, y=16
-        Sensor at x=13, y=2: closest beacon is at x=15, y=3
-        Sensor at x=12, y=14: closest beacon is at x=10, y=16
-        Sensor at x=10, y=20: closest beacon is at x=10, y=16
-        Sensor at x=14, y=17: closest beacon is at x=10, y=16
-        Sensor at x=8, y=7: closest beacon is at x=2, y=10
-        Sensor at x=2, y=0: closest beacon is at x=2, y=10
-        Sensor at x=0, y=11: closest beacon is at x=2, y=10
-        Sensor at x=20, y=14: closest beacon is at x=25, y=17
-        Sensor at x=17, y=20: closest beacon is at x=21, y=22
-        Sensor at x=16, y=7: closest beacon is at x=15, y=3
-        Sensor at x=14, y=3: closest beacon is at x=15, y=3
-        Sensor at x=20, y=1: closest beacon is at x=15, y=3
-    """.trimIndent()
+    val sensors = listOf<Sensor>(
+        Sensor(sensor = Position(2, 18), closestBeacon = Position(-2, 15)),
+        Sensor(sensor = Position(9, 16), closestBeacon = Position(10, 16)),
+        Sensor(sensor = Position(13, 2), closestBeacon = Position(15, 3)),
+        Sensor(sensor = Position(12, 14), closestBeacon = Position(10, 16)),
+        Sensor(sensor = Position(10, 20), closestBeacon = Position(10, 16)),
+        Sensor(sensor = Position(14, 17), closestBeacon = Position(10, 16)),
+        Sensor(sensor = Position(8, 7), closestBeacon = Position(2, 10)),
+        Sensor(sensor = Position(2, 0), closestBeacon = Position(2, 10)),
+        Sensor(sensor = Position(0, 11), closestBeacon = Position(2, 10)),
+        Sensor(sensor = Position(20, 14), closestBeacon = Position(25, 17)),
+        Sensor(sensor = Position(17, 20), closestBeacon = Position(21, 22)),
+        Sensor(sensor = Position(16, 7), closestBeacon = Position(15, 3)),
+        Sensor(sensor = Position(14, 3), closestBeacon = Position(15, 3)),
+        Sensor(sensor = Position(20, 1), closestBeacon = Position(15, 3))
+    )
 
     @Test
-    fun test() {
-        val solver = DayFifteen(input)
-        assertEquals(26, solver.partOne(rowOfInterest = 10))
+    fun t1_p1() {
+        val solver = DayFifteen(sensors, rowOfInterest = 10)
+        assertEquals(26, solver.partOne())
+    }
+
+    @Test
+    fun t1_p2() {
+        val solver = DayFifteen(sensors, rowOfInterest = 10)
+        assertEquals(56000011, solver.partTwo())
     }
 }
