@@ -2,7 +2,7 @@ package aoc.lib
 
 import kotlin.Int.Companion.MAX_VALUE
 
-class Grid2D(val positions: List<Position>? = listOf()) {
+class Grid2D(positions: List<Position>? = listOf()) {
     var grid: MutableList<Position> = mutableListOf()
 
     init {
@@ -62,6 +62,12 @@ class Grid2D(val positions: List<Position>? = listOf()) {
         }
         return if (min == MAX_VALUE) 0 else min
     }
+
+    fun getRowAt(idx: Int): Set<Position> {
+        return grid.filter { position -> position.y == idx }.toSet()
+    }
+
+    fun addTo(positions: List<Position>) = this.grid.addAll(positions)
 
     fun print2D(): String {
         val string = StringBuilder()

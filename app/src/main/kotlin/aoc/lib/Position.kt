@@ -6,6 +6,8 @@ import kotlin.math.sign
 
 data class Position(val x: Int, val y: Int) {
 
+    operator fun plus(p: Position) = Position(x + p.x, y + p.y)
+
     fun getManhattanDistance(other: Position) = abs(x - other.x) + abs(y - other.y)
 
     fun moveBy(dir: Direction, units: Int = 1): Position = when (dir) {
