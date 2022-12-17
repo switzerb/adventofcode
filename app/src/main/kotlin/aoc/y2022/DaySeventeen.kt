@@ -77,12 +77,21 @@ data class Rock(val shape: Shape) {
     fun moveDown(): Rock = this.moveTo(Position(0, 1))
 
     fun getRockBottomEdge(): Set<Position> {
+        val down = Position(0, 1)
         return when (shape) {
-            Shape.HLINE -> positions.toSet()
-            Shape.DIAMOND -> setOf(positions[0])
-            Shape.DEL -> setOf(positions[0], positions[1], positions[2])
-            Shape.VLINE -> setOf(positions[0])
-            Shape.SQUARE -> setOf(positions[0], positions[1])
+            Shape.HLINE -> {
+                positions.map { it.plus(down) }.toSet()
+            }
+            Shape.DIAMOND -> setOf(positions[0].plus(down))
+            Shape.DEL -> {
+                setOf(
+                    positions[0].plus(down),
+                    positions[1].plus(down),
+                    positions[2].plus(down)
+                )
+            }
+            Shape.VLINE -> setOf(positions[0].plus(down))
+            Shape.SQUARE -> setOf(positions[0].plus(down), positions[1].plus(down))
         }
     }
 }
@@ -90,16 +99,16 @@ data class Rock(val shape: Shape) {
 // starts seven wide with a bottom, four deep
 data class Chamber(val rocks: Grid2D = Grid2D()) {
     fun canMoveLeft(rock: Rock): Boolean {
-        return rock.positions.none { position -> position.x <= 0 }
+        return !rock.positions.any { position -> position.x <= 0 }
     }
 
     fun canMoveRight(rock: Rock): Boolean {
-        return rock.positions.none { position -> position.x >= 7 }
+        return !rock.positions.any { position -> position.x >= 6 }
     }
 
     fun canMoveDown(rock: Rock, row: Int): Boolean {
-        if (row == 0) return false
-        return rock.getRockBottomEdge().intersect(rocks.getRowAt(row)).isNotEmpty()
+        if (row == 1) return false
+        return rock.getRockBottomEdge().intersect(rocks.getRowAt(row)).isEmpty()
     }
 }
 
@@ -121,12 +130,16 @@ class DaySeventeen(private val input: String) {
         val chamber = Chamber()
         var round = 0
         var jet = 0
-        val highestRock = chamber.rocks.minY()
+        var highestRock = chamber.rocks.minY()
 
         while (round < rounds) {
+            highestRock = chamber.rocks.minY()
+            var heightIdx = highestRock - 3
+            if (round > 0) {
+                heightIdx = highestRock - 4
+            }
             val shapeIdx = round % Shape.values().size
             val rockTemplate = rockSequence[shapeIdx]
-            val heightIdx = highestRock - 3 // rocks start three positions above the highest rock
             val startingPosition = Position(2, heightIdx)
             var fallingRock = rockTemplate.moveTo(startingPosition)
 
@@ -138,7 +151,8 @@ class DaySeventeen(private val input: String) {
 
                 fallingRock = when (motion) {
                     LEFT -> {
-                        if(chamber.canMoveLeft(fallingRock)) {
+                        if (chamber.canMoveLeft(fallingRock)) {
+                            println("${fallingRock.shape} moves left")
                             fallingRock.moveLeft()
                         } else {
                             fallingRock
@@ -146,6 +160,7 @@ class DaySeventeen(private val input: String) {
                     }
                     RIGHT -> {
                         if (chamber.canMoveRight(fallingRock)) {
+                            println("${fallingRock.shape} moves right")
                             fallingRock.moveRight()
                         } else {
                             fallingRock
@@ -155,14 +170,18 @@ class DaySeventeen(private val input: String) {
                 }
 
                 if (chamber.canMoveDown(fallingRock, heightIdx + 1)) {
+                    println("${fallingRock.shape} moves down")
                     fallingRock = fallingRock.moveDown()
+                    heightIdx++
                 } else {
+                    println("${fallingRock.shape} at rest")
                     chamber.rocks.addTo(fallingRock.positions.toList())
                     canMove = false
                 }
-                println(chamber.rocks.print2D())
                 jet++
             }
+            println(chamber.rocks.print2D())
+            val something = 0
             round++
         }
         return highestRock
