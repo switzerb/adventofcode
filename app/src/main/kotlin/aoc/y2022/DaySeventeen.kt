@@ -3,8 +3,7 @@ package aoc.y2022
 import aoc.lib.Grid2D
 import aoc.lib.Position
 import aoc.lib.Resources.fileAsString
-import java.lang.Math.abs
-import kotlin.math.min
+import kotlin.math.abs
 
 /**
  * --- Day 17: Pyroclastic Flow ---
@@ -46,54 +45,27 @@ class DaySeventeen(private val input: String) {
     private val rockSequence = listOf(
         Rock(
             shape = Shape.HLINE,
-            coords = listOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(2, 0),
-                Position(3, 0)
-            ),
+            coords = listOf(Position(0, 0), Position(1, 0), Position(2, 0), Position(3, 0)),
             tall = 1
         ),
         Rock(
             shape = Shape.DIAMOND,
-            coords = listOf(
-                Position(1, 0),
-                Position(0, -1),
-                Position(1, -1),
-                Position(2, -1),
-                Position(1, -2)
-            ),
+            coords = listOf(Position(1, 0), Position(0, -1), Position(1, -1), Position(2, -1), Position(1, -2)),
             tall = 3
         ),
         Rock(
             shape = Shape.DEL,
-            coords = listOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(2, 0),
-                Position(2, -1),
-                Position(2, -2)
-            ),
+            coords = listOf(Position(0, 0), Position(1, 0), Position(2, 0), Position(2, -1), Position(2, -2)),
             tall = 3
         ),
         Rock(
             shape = Shape.VLINE,
-            coords = listOf(
-                Position(0, 0),
-                Position(0, -1),
-                Position(0, -2),
-                Position(0, -3)
-            ),
+            coords = listOf(Position(0, 0), Position(0, -1), Position(0, -2), Position(0, -3)),
             tall = 4
         ),
         Rock(
             shape = Shape.SQUARE,
-            coords = listOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(0, -1),
-                Position(1, -1)
-            ),
+            coords = listOf(Position(0, 0), Position(1, 0), Position(0, -1), Position(1, -1)),
             tall = 2
         )
     )
@@ -108,7 +80,7 @@ class DaySeventeen(private val input: String) {
 
     fun draw(rock: Rock? = null) =
         buildString {
-            for (y in atRest.minY()..0) {
+            for (y in atRest.minY() - 5..0) {
                 for (x in -1..CHAMBER_WIDTH) {
                     if (x < 0 || x == CHAMBER_WIDTH) append('|')
                     else if (atRest.grid.contains(Position(x, y))) append('#')
@@ -131,8 +103,7 @@ class DaySeventeen(private val input: String) {
 
         repeat(rounds) {
             val nextRock = rockSequence[rockIdx++ % Shape.values().size]
-            var rock = nextRock.move(Position(2, height - nextRock.tall - 2))
-
+            var rock = nextRock.move(Position(2, height - 3))
             while (true) {
                 val motion = jets[jetIdx++ % jets.size]
 
@@ -142,16 +113,21 @@ class DaySeventeen(private val input: String) {
                     else -> throw UnsupportedOperationException("Motion not supported")
                 }
                 if (couldMove(pushed)) rock = pushed
+//                println("Moves $motion...")
+//                println(draw(rock))
                 val dropped = rock.down()
                 if (couldMove(dropped)) {
                     rock = dropped
+//                    println("Drops...")
+//                    println(draw(rock))
                 } else {
                     atRest.addTo(rock.coords.toList())
-                    height = min(atRest.minY(), -rock.tall)
+                    height = if (height == 0) -rock.tall else atRest.minY() - 1
+//                    println("At rest...")
+//                    println(draw(rock))
                     break
                 }
             }
-//            println(draw(rock))
         }
         return abs(height)
     }
@@ -164,5 +140,5 @@ class DaySeventeen(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day17_2022.txt")
     val solver = DaySeventeen(input)
-    println(solver.partOne(rounds = 2022))
+    println(solver.partOne(rounds = 2022)) // 3147
 }
