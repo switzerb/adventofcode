@@ -1,13 +1,17 @@
 package aoc.y2022
 
+import aoc.lib.Direction
 import aoc.lib.Grid2D
 import aoc.lib.Position
 import aoc.lib.Resources.fileAsString
+import kotlin.math.max
 
 /**
  * --- Day 17: Pyroclastic Flow ---
  * https://adventofcode.com/2022/day/17
  */
+
+const val CHAMBER_WIDTH = 7
 
 enum class Shape {
     HLINE,
@@ -17,105 +21,117 @@ enum class Shape {
     SQUARE
 }
 
-data class Rock(val shape: Shape) {
-    var positions: MutableList<Position> = mutableListOf()
-
-    constructor(shape: Shape, coords: MutableList<Position>) : this(shape) {
-        positions.addAll(coords)
-    }
+data class Rock(
+    val shape: Shape,
+    var coords: MutableList<Position> = mutableListOf()
+) {
+    var tall = 0
 
     init {
-        positions = when (shape) {
-            Shape.HLINE -> mutableListOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(2, 0),
-                Position(3, 0)
-            )
-            Shape.DIAMOND -> mutableListOf(
-                Position(1, 0),
-                Position(0, -1),
-                Position(1, -1),
-                Position(2, -1),
-                Position(1, -2)
-            )
-            Shape.DEL -> mutableListOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(2, 0),
-                Position(2, -1),
-                Position(2, -2)
-            )
-            Shape.VLINE -> mutableListOf(
-                Position(0, 0),
-                Position(0, -1),
-                Position(0, -2),
-                Position(0, -3)
-            )
-            Shape.SQUARE -> mutableListOf(
-                Position(0, 0),
-                Position(1, 0),
-                Position(0, -1),
-                Position(1, -1)
-            )
+        when (shape) {
+            Shape.HLINE -> {
+                this.tall = 1
+                this.coords = mutableListOf(
+                    Position(0, 0),
+                    Position(1, 0),
+                    Position(2, 0),
+                    Position(3, 0)
+                )
+            }
+            Shape.DIAMOND -> {
+                this.tall = 3
+                this.coords = mutableListOf(
+                    Position(1, 0),
+                    Position(0, -1),
+                    Position(1, -1),
+                    Position(2, -1),
+                    Position(1, -2)
+                )
+            }
+            Shape.DEL -> {
+                this.tall = 3
+                this.coords = mutableListOf(
+                    Position(0, 0),
+                    Position(1, 0),
+                    Position(2, 0),
+                    Position(2, -1),
+                    Position(2, -2)
+                )
+            }
+            Shape.VLINE -> {
+                this.tall = 4
+                this.coords = mutableListOf(
+                    Position(0, 0),
+                    Position(0, -1),
+                    Position(0, -2),
+                    Position(0, -3)
+                )
+            }
+            Shape.SQUARE -> {
+                this.tall = 2
+                this.coords = mutableListOf(
+                    Position(0, 0),
+                    Position(1, 0),
+                    Position(0, -1),
+                    Position(1, -1)
+                )
+            }
         }
     }
 
     fun moveTo(p: Position): Rock {
         val newPositions = buildList {
-            for (pos in positions) {
+            for (pos in this@Rock.coords) {
                 add(pos.plus(p))
             }
         }.toMutableList()
-        this.positions.clear()
-        this.positions.addAll(newPositions)
+        this.coords.clear()
+        this.coords.addAll(newPositions)
         return this
     }
 
-    fun moveRight(): Rock = this.moveTo(Position(1, 0))
-    fun moveLeft(): Rock = this.moveTo(Position(-1, 0))
-    fun moveDown(): Rock = this.moveTo(Position(0, 1))
+    fun move(dir: Direction, unit: Int = 1) =
+        copy(shape = shape, coords = this.coords.map { it.moveBy(dir, unit) }.toMutableList())
 
-    fun getRockBottomEdge(): Set<Position> {
-        val down = Position(0, 1)
-        return when (shape) {
-            Shape.HLINE -> {
-                positions.map { it.plus(down) }.toSet()
-            }
-            Shape.DIAMOND -> setOf(positions[0].plus(down))
-            Shape.DEL -> {
-                setOf(
-                    positions[0].plus(down),
-                    positions[1].plus(down),
-                    positions[2].plus(down)
-                )
-            }
-            Shape.VLINE -> setOf(positions[0].plus(down))
-            Shape.SQUARE -> setOf(positions[0].plus(down), positions[1].plus(down))
-        }
-    }
+    fun down(unit: Int = 1) =
+        move(Direction.SOUTH, unit)
+
+    fun right(unit: Int = 1) =
+        move(Direction.EAST, unit)
+
+    fun left(unit: Int = 1) =
+        move(Direction.WEST, unit)
 }
 
 // starts seven wide with a bottom, four deep
-data class Chamber(val rocks: Grid2D = Grid2D()) {
-    fun canMoveLeft(rock: Rock): Boolean {
-        return !rock.positions.any { position -> position.x <= 0 }
-    }
+data class Chamber(val atRest: Grid2D = Grid2D()) {
+    fun canMove(rock: Rock) =
+        rock.coords.all {
+            it.x in 0..6 &&
+                it.y <= 0 &&
+                !atRest.grid.contains(it)
+        }
 
-    fun canMoveRight(rock: Rock): Boolean {
-        return !rock.positions.any { position -> position.x >= 6 }
-    }
-
-    fun canMoveDown(rock: Rock, row: Int): Boolean {
-        if (row == 1) return false
-        return rock.getRockBottomEdge().intersect(rocks.getRowAt(row)).isEmpty()
-    }
+    fun draw(rock: Rock? = null) =
+        buildString {
+            for (y in atRest.minY()..0) {
+                for (x in -1..CHAMBER_WIDTH) {
+                    if (x < 0 || x == CHAMBER_WIDTH) append('|')
+                    else if (atRest.grid.contains(Position(x, y))) append('#')
+                    else if (rock == null) append('.')
+                    else if (rock.coords.contains(Position(x, y))) append('@')
+                    else append('.')
+                }
+                append('\n')
+            }
+            append('+')
+            append("-".repeat(CHAMBER_WIDTH))
+            append('+')
+            append('\n')
+        }
 }
 
 class DaySeventeen(private val input: String) {
-    private val RIGHT = '>'
-    private val LEFT = '<'
-
     private val rockSequence = listOf(
         Rock(shape = Shape.HLINE),
         Rock(shape = Shape.DIAMOND),
@@ -128,66 +144,41 @@ class DaySeventeen(private val input: String) {
 
     fun partOne(rounds: Int): Int {
         val chamber = Chamber()
-        var round = 0
-        var jet = 0
-        var highestRock = chamber.rocks.minY()
+        var rockIdx = 0
+        var jetIdx = 0
+        var height = 0
 
-        while (round < rounds) {
-            highestRock = chamber.rocks.minY()
-            var heightIdx = highestRock - 3
-            if (round > 0) {
-                heightIdx = highestRock - 4
-            }
-            val shapeIdx = round % Shape.values().size
-            val rockTemplate = rockSequence[shapeIdx]
-            val startingPosition = Position(2, heightIdx)
-            var fallingRock = rockTemplate.moveTo(startingPosition)
+        repeat(rounds) {
+            val nextRock = rockSequence[rockIdx++ % Shape.values().size]
+            var rock = nextRock.moveTo(Position(2, height - nextRock.tall - 2))
 
             var canMove = true
 
             while (canMove) {
-                val jetIdx = jet % jets.size
-                val motion = jets[jetIdx]
+                val motion = jets[jetIdx++ % jets.size]
 
-                fallingRock = when (motion) {
-                    LEFT -> {
-                        if (chamber.canMoveLeft(fallingRock)) {
-                            println("${fallingRock.shape} moves left")
-                            fallingRock.moveLeft()
-                        } else {
-                            fallingRock
-                        }
-                    }
-                    RIGHT -> {
-                        if (chamber.canMoveRight(fallingRock)) {
-                            println("${fallingRock.shape} moves right")
-                            fallingRock.moveRight()
-                        } else {
-                            fallingRock
-                        }
-                    }
+                rock = when (motion) {
+                    '<' -> if (chamber.canMove(rock)) rock.move(Direction.EAST) else rock
+                    '>' -> if (chamber.canMove(rock)) rock.move(Direction.WEST) else rock
                     else -> throw UnsupportedOperationException("Motion not supported")
                 }
 
-                if (chamber.canMoveDown(fallingRock, heightIdx + 1)) {
-                    println("${fallingRock.shape} moves down")
-                    fallingRock = fallingRock.moveDown()
-                    heightIdx++
+                if (chamber.canMove(rock)) {
+                    rock = rock.move(Direction.SOUTH)
                 } else {
-                    println("${fallingRock.shape} at rest")
-                    chamber.rocks.addTo(fallingRock.positions.toList())
+                    chamber.atRest.addTo(rock.coords.toList())
+                    height = max(height, -rock.tall)
                     canMove = false
                 }
-                jet++
+                println(chamber.draw(rock))
             }
-            println(chamber.rocks.print2D())
-            val something = 0
-            round++
         }
-        return highestRock
+        return height
     }
 
-    fun partTwo() {}
+    fun partTwo(): Long {
+        return 0L
+    }
 }
 
 fun main(args: Array<String>) {

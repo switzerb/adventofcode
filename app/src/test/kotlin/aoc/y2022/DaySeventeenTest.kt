@@ -1,6 +1,5 @@
 package aoc.y2022
 
-import aoc.lib.Position
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -18,34 +17,7 @@ class DaySeventeenTest {
     }
 
     @Test
-    fun t2_p1() {
-        val start = Position(2, -3)
-        val hline = Rock(shape = Shape.HLINE)
-        val diamond = Rock(shape = Shape.DIAMOND)
-        assertEquals(
-            hline.moveTo(start),
-            Rock(
-                Shape.HLINE,
-                coords = mutableListOf(
-                    Position(2, -3),
-                    Position(3, -3),
-                    Position(4, -3),
-                    Position(5, -3)
-                )
-            )
-        )
-        assertEquals(
-            diamond.moveTo(start),
-            Rock(
-                Shape.DIAMOND,
-                coords = mutableListOf(
-                    Position(3, -3),
-                    Position(2, -4),
-                    Position(3, -4),
-                    Position(4, -4),
-                    Position(3, -5)
-                )
-            )
-        )
+    fun t1_p12() {
+        assertEquals(1514285714288, solver.partTwo())
     }
 }
