@@ -1,10 +1,10 @@
 package aoc.y2022
 
-import aoc.lib.Direction
 import aoc.lib.Grid2D
 import aoc.lib.Position
 import aoc.lib.Resources.fileAsString
-import kotlin.math.max
+import java.lang.Math.abs
+import kotlin.math.min
 
 /**
  * --- Day 17: Pyroclastic Flow ---
@@ -23,89 +23,83 @@ enum class Shape {
 
 data class Rock(
     val shape: Shape,
-    var coords: MutableList<Position> = mutableListOf()
+    val coords: List<Position>,
+    val tall: Int
 ) {
-    var tall = 0
-
-    init {
-        when (shape) {
-            Shape.HLINE -> {
-                this.tall = 1
-                this.coords = mutableListOf(
-                    Position(0, 0),
-                    Position(1, 0),
-                    Position(2, 0),
-                    Position(3, 0)
-                )
-            }
-            Shape.DIAMOND -> {
-                this.tall = 3
-                this.coords = mutableListOf(
-                    Position(1, 0),
-                    Position(0, -1),
-                    Position(1, -1),
-                    Position(2, -1),
-                    Position(1, -2)
-                )
-            }
-            Shape.DEL -> {
-                this.tall = 3
-                this.coords = mutableListOf(
-                    Position(0, 0),
-                    Position(1, 0),
-                    Position(2, 0),
-                    Position(2, -1),
-                    Position(2, -2)
-                )
-            }
-            Shape.VLINE -> {
-                this.tall = 4
-                this.coords = mutableListOf(
-                    Position(0, 0),
-                    Position(0, -1),
-                    Position(0, -2),
-                    Position(0, -3)
-                )
-            }
-            Shape.SQUARE -> {
-                this.tall = 2
-                this.coords = mutableListOf(
-                    Position(0, 0),
-                    Position(1, 0),
-                    Position(0, -1),
-                    Position(1, -1)
-                )
-            }
-        }
-    }
-
-    fun moveTo(p: Position): Rock {
+    fun move(p: Position): Rock {
         val newPositions = buildList {
-            for (pos in this@Rock.coords) {
+            for (pos in coords) {
                 add(pos.plus(p))
             }
-        }.toMutableList()
-        this.coords.clear()
-        this.coords.addAll(newPositions)
-        return this
+        }
+        return copy(coords = newPositions)
     }
 
-    fun move(dir: Direction, unit: Int = 1) =
-        copy(shape = shape, coords = this.coords.map { it.moveBy(dir, unit) }.toMutableList())
-
-    fun down(unit: Int = 1) =
-        move(Direction.SOUTH, unit)
-
-    fun right(unit: Int = 1) =
-        move(Direction.EAST, unit)
-
-    fun left(unit: Int = 1) =
-        move(Direction.WEST, unit)
+    fun right(): Rock = this.move(Position(1, 0))
+    fun left(): Rock = this.move(Position(-1, 0))
+    fun down(): Rock = this.move(Position(0, 1))
 }
 
-// starts seven wide with a bottom, four deep
-data class Chamber(val atRest: Grid2D = Grid2D()) {
-    fun canMove(rock: Rock) =
+class DaySeventeen(private val input: String) {
+    val atRest: Grid2D = Grid2D()
+
+    private val rockSequence = listOf(
+        Rock(
+            shape = Shape.HLINE,
+            coords = listOf(
+                Position(0, 0),
+                Position(1, 0),
+                Position(2, 0),
+                Position(3, 0)
+            ),
+            tall = 1
+        ),
+        Rock(
+            shape = Shape.DIAMOND,
+            coords = listOf(
+                Position(1, 0),
+                Position(0, -1),
+                Position(1, -1),
+                Position(2, -1),
+                Position(1, -2)
+            ),
+            tall = 3
+        ),
+        Rock(
+            shape = Shape.DEL,
+            coords = listOf(
+                Position(0, 0),
+                Position(1, 0),
+                Position(2, 0),
+                Position(2, -1),
+                Position(2, -2)
+            ),
+            tall = 3
+        ),
+        Rock(
+            shape = Shape.VLINE,
+            coords = listOf(
+                Position(0, 0),
+                Position(0, -1),
+                Position(0, -2),
+                Position(0, -3)
+            ),
+            tall = 4
+        ),
+        Rock(
+            shape = Shape.SQUARE,
+            coords = listOf(
+                Position(0, 0),
+                Position(1, 0),
+                Position(0, -1),
+                Position(1, -1)
+            ),
+            tall = 2
+        )
+    )
+    val jets = input.toCharArray()
+
+    fun couldMove(rock: Rock) =
         rock.coords.all {
             it.x in 0..6 &&
                 it.y <= 0 &&
@@ -129,51 +123,37 @@ data class Chamber(val atRest: Grid2D = Grid2D()) {
             append('+')
             append('\n')
         }
-}
-
-class DaySeventeen(private val input: String) {
-    private val rockSequence = listOf(
-        Rock(shape = Shape.HLINE),
-        Rock(shape = Shape.DIAMOND),
-        Rock(shape = Shape.DEL),
-        Rock(shape = Shape.VLINE),
-        Rock(shape = Shape.SQUARE)
-    )
-
-    val jets = input.toCharArray()
 
     fun partOne(rounds: Int): Int {
-        val chamber = Chamber()
         var rockIdx = 0
         var jetIdx = 0
         var height = 0
 
         repeat(rounds) {
             val nextRock = rockSequence[rockIdx++ % Shape.values().size]
-            var rock = nextRock.moveTo(Position(2, height - nextRock.tall - 2))
+            var rock = nextRock.move(Position(2, height - nextRock.tall - 2))
 
-            var canMove = true
-
-            while (canMove) {
+            while (true) {
                 val motion = jets[jetIdx++ % jets.size]
 
-                rock = when (motion) {
-                    '<' -> if (chamber.canMove(rock)) rock.move(Direction.EAST) else rock
-                    '>' -> if (chamber.canMove(rock)) rock.move(Direction.WEST) else rock
+                val pushed = when (motion) {
+                    '<' -> rock.left()
+                    '>' -> rock.right()
                     else -> throw UnsupportedOperationException("Motion not supported")
                 }
-
-                if (chamber.canMove(rock)) {
-                    rock = rock.move(Direction.SOUTH)
+                if (couldMove(pushed)) rock = pushed
+                val dropped = rock.down()
+                if (couldMove(dropped)) {
+                    rock = dropped
                 } else {
-                    chamber.atRest.addTo(rock.coords.toList())
-                    height = max(height, -rock.tall)
-                    canMove = false
+                    atRest.addTo(rock.coords.toList())
+                    height = min(atRest.minY(), -rock.tall)
+                    break
                 }
-                println(chamber.draw(rock))
             }
+//            println(draw(rock))
         }
-        return height
+        return abs(height)
     }
 
     fun partTwo(): Long {
