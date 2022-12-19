@@ -26,6 +26,9 @@ class Vector {
             deltas.removeAt(deltas.size / 2)
             return deltas
         }
+
+        fun from(input: String): Vector =
+            input.split(",").let { (x, y, z) -> Vector(x.toInt(), y.toInt(), z.toInt()) }
     }
 
     constructor(coords: List<Int>) {
@@ -61,7 +64,17 @@ class Vector {
         return Vector(this.coords.zip(other.coords).map { it.first + it.second })
     }
 
-    fun neighbors(): List<Vector> = adjacentDeltas(coords.size).map { it + this }
+//    fun neighbors(): List<Vector> = adjacentDeltas(coords.size).map { it + this }
+
+    fun neighbors(): Set<Vector> =
+        setOf(
+            Vector(x = x() - 1, y = y(), z = z()),
+            Vector(x = x() + 1, y = y(), z = z()),
+            Vector(x = x(), y = y() - 1, z = z()),
+            Vector(x = x(), y = y() + 1, z = z()),
+            Vector(x = x(), y = y(), z = z() - 1),
+            Vector(x = x(), y = y(), z = z() + 1)
+        )
 
     override fun equals(other: Any?): Boolean {
         if (other !is Vector) {
