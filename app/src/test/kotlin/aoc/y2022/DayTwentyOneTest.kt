@@ -24,7 +24,7 @@ class DayTwentyOneTest {
     """.trimIndent()
 
     @Test
-    fun test() {
+    fun t1_p1() {
         val solver = DayTwentyOne(input)
         assertEquals(152, solver.partOne())
     }

@@ -4,33 +4,64 @@ import aoc.lib.Resources.fileAsString
 
 class DayTwentyOne(private val input: String) {
 
-    data class Monkey(
-        val name: String,
-        val num: Int?,
-        val op: String?
-    )
-
-    val parsed = listOf(
-        Monkey(name = "root", num = null, op = "pppw +sjmn"),
-        Monkey(name = "dbpl", num = 5, op = null),
-        Monkey(name = "cczh", num = null, op = "sllz + lgvd"),
-        Monkey(name = "zczc", num = 2, op = null),
-        Monkey(name = "ptdq", num = null, op = "humn - dvpt"),
-        Monkey(name = "dvpt", num = 3, op = null),
-        Monkey(name = "lfqf", num = 4, op = null),
-        Monkey(name = "humn", num = 5, op = null),
-        Monkey(name = "ljgn", num = 2, op = null),
-        Monkey(name = "sjmn", num = null, op = "drzm * dbpl"), //
-        Monkey(name = "sllz", num = 4, op = null),
-        Monkey(name = "pppw", num = null, op = "cczh / lfqf"),
-        Monkey(name = "lgvd", num = null, op = "ljgn * ptdq"),
-        Monkey(name = "drzm", num = null, op = "hmdt - zczc"),
-        Monkey(name = "hmdt", num = 32, op = null)
-    )
-
-    fun partOne(): Int {
-        return 0
+    sealed interface Monkey {
+        val name: String
     }
+
+    data class MathMonkey(
+        override val name: String,
+        val number: Long
+    ) : Monkey
+
+    data class TeamMonkey(
+        override val name: String,
+        val left: String,
+        val right: String,
+        val op: String
+    ) : Monkey {
+
+        fun operate(left: Long, right: Long): Long =
+            when (op) {
+                "+" -> left + right
+                "-" -> left - right
+                "*" -> left * right
+                "/" -> left / right
+                else -> throw UnsupportedOperationException("Monkey don't play that.")
+            }
+    }
+
+    val monkeyMap: Map<String, Monkey> = input
+        .split("\n")
+        .map {
+            val name = it.substringBefore(":")
+            val rest = it.substringAfter(":").trim()
+            when {
+                rest.isNumeric() -> MathMonkey(name = name, number = rest.toLong())
+                else -> {
+                    val (left, op, right) = rest.split(" ")
+                    TeamMonkey(
+                        name,
+                        left,
+                        right,
+                        op
+                    )
+                }
+            }
+        }.associateBy { it.name }
+
+    fun String.isNumeric(): Boolean = this.all { char -> char.isDigit() }
+
+    fun yell(name: String, monkeys: Map<String, Monkey>): Long {
+        val monkey: Monkey = monkeys[name]!!
+        return when (monkey) {
+            is MathMonkey -> monkey.number
+            is TeamMonkey -> {
+                monkey.operate(yell(monkey.left, monkeys), yell(monkey.right, monkeys))
+            }
+        }
+    }
+
+    fun partOne(): Long = yell("root", monkeyMap)
 
     fun partTwo() {}
 }
