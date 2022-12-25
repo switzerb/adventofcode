@@ -4,10 +4,12 @@ import aoc.lib.Resources.fileAsString
 
 sealed class Robot {
     abstract fun build(): Int
-    fun produce(): Int
+    fun produce(): Int {
+        TODO("Not yet implemented")
+    }
 }
 
-data class Clay : Robot() {
+data class Clay(val something: Any) : Robot() {
     override fun build(): Int {
         TODO("Not yet implemented")
     }
@@ -18,11 +20,8 @@ data class Blueprint(
     val oreCost: Int,
     val clayCost: Int,
     val obsidianCost: Int,
-    val geodeCost: Int,
-) {
-    fun buildRobot(type:)
-
-}
+    val geodeCost: Int
+)
 
 class DayNineteen(private val input: String) {
 
@@ -68,5 +67,5 @@ class DayNineteen(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day19_2022.txt")
     val solver = DayNineteen(input)
-    println(solver.partOne())
+    println(solver.partOne(1))
 }
