@@ -23,9 +23,26 @@ class DayTwentyOneTest {
         hmdt: 32
     """.trimIndent()
 
+    val solver = DayTwentyOne(input)
+
     @Test
     fun t1_p1() {
-        val solver = DayTwentyOne(input)
         assertEquals(152, solver.partOne())
+    }
+
+    @Test
+    fun t1_p2() {
+        assertEquals(301, solver.partTwo())
+    }
+
+    @Test
+    fun t2_p2() {
+        val input = """
+         root: humn + sjmn
+         sjmn: 3
+         humn: 5
+        """.trimIndent()
+        val solver = DayTwentyOne(input)
+        assertEquals(3, solver.partTwo())
     }
 }
