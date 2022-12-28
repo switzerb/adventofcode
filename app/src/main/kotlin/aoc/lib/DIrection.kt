@@ -1,5 +1,6 @@
 package aoc.lib
 
+import aoc.y2022.Dir
 import java.lang.UnsupportedOperationException
 
 enum class Direction {
@@ -13,6 +14,13 @@ enum class Direction {
         EAST -> SOUTH
         SOUTH -> WEST
         WEST -> NORTH
+    }
+
+    fun turn(to: String): Direction = when (this) {
+        NORTH -> if (to == "R") EAST else WEST
+        SOUTH -> if (to == "R") WEST else EAST
+        EAST -> if (to == "R") SOUTH else NORTH
+        WEST -> if (to == "R") NORTH else SOUTH
     }
 
     companion object {

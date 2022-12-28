@@ -69,7 +69,7 @@ class Grid2D(positions: List<Position>? = listOf()) {
 
     fun addTo(positions: List<Position>) = this.grid.addAll(positions)
 
-    fun print2D(): String {
+    override fun toString(): String {
         val string = StringBuilder()
         (minY()..maxY()).map { col ->
             (minX()..maxX()).map { row ->
