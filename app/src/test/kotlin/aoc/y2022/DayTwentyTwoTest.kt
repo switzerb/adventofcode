@@ -1,5 +1,7 @@
 package aoc.y2022
 
+import aoc.lib.Direction
+import aoc.lib.Position
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -21,7 +23,6 @@ class DayTwentyTwoTest {
 
 10R5L5R10L4R5L5
     """.trimIndent()
-
     val solver = DayTwentyTwo(input)
 
     @Test
@@ -31,8 +32,9 @@ class DayTwentyTwoTest {
 
     @Test
     fun t2_p1() {
+        val player = Player(Position(8, 0), Direction.EAST)
         val expected = """
-        ...#    
+        >..#    
         .#..    
         #...    
         ....    
@@ -45,6 +47,6 @@ class DayTwentyTwoTest {
         .#......
         ......#.
 """
-        assertEquals(expected, solver.parse().toString())
+        assertEquals(expected, solver.board.printBoard(player))
     }
 }

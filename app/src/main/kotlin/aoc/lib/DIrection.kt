@@ -1,6 +1,5 @@
 package aoc.lib
 
-import aoc.y2022.Dir
 import java.lang.UnsupportedOperationException
 
 enum class Direction {
