@@ -1,13 +1,12 @@
 package aoc.y2022
 
+import aoc.lib.Resources.fileAsString
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class DayTwentyTest {
 
-    @Test
-    fun t1_p1() {
-        val input = """
+    val input = """
             1
             2
             -3
@@ -15,40 +14,23 @@ class DayTwentyTest {
             -2
             0
             4
-        """.trimIndent()
-        val solver = DayTwenty(input)
+    """.trimIndent()
+    val solver = DayTwenty(input)
+
+    @Test
+    fun t1_p1() {
         assertEquals(3, solver.partOne())
     }
 
     @Test
-    fun t2_p1() {
-        val input = """
-            4
-            5 
-            6 
-            1
-            7 
-            8 
-            9
-        """.trimIndent()
-        val solver = DayTwenty(input)
-//        solver.move(3)
-//        assertEquals(listOf(4, 5, 6, 7, 1, 8, 9), solver.mixed.toList())
+    fun t1_p2() {
+        assertEquals(1623178306, solver.partTwo())
     }
 
     @Test
-    fun t4_p1() {
-        val input = """
-            4
-            -2
-            5
-            6
-            7
-            8
-            9
-        """.trimIndent()
+    fun actual_p2() {
+        val input = fileAsString("2022/day21_2022.txt")
         val solver = DayTwenty(input)
-//        solver.move(1)
-//        assertEquals(listOf(4, 5, 6, 7, 8, -2, 9), solver.mixed.toList())
+        assertEquals(1595584274798, solver.partTwo())
     }
 }

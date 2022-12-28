@@ -2,7 +2,7 @@ package aoc.y2022
 
 import aoc.lib.Resources.fileAsString
 
-data class MixNumber(val idx: Int, val value: Int)
+data class MixNumber(val idx: Int, val value: Long)
 
 class DayTwenty(private val input: String) {
 
@@ -12,7 +12,14 @@ class DayTwenty(private val input: String) {
         input
             .split("\n")
             .mapIndexed { idx, value ->
-                MixNumber(idx, value.toInt())
+                MixNumber(idx, value.toLong())
+            }.toMutableList()
+
+    val appliedNumbers: MutableList<MixNumber> =
+        input
+            .split("\n")
+            .mapIndexed { idx, value ->
+                MixNumber(idx, value.toLong() * decryptionKey)
             }.toMutableList()
 
     fun mix(numbers: MutableList<MixNumber>) {
@@ -23,22 +30,28 @@ class DayTwenty(private val input: String) {
         }
     }
 
-    fun coords(numbers: MutableList<MixNumber>): Int {
-        val zero = numbers.indexOfFirst { it.value == 0 }
+    fun coords(numbers: MutableList<MixNumber>): Long {
+        val zero = numbers.indexOfFirst { it.value == 0L }
         val idxOfInterest = listOf(1000, 2000, 3000)
         return idxOfInterest.sumOf { nums -> numbers[(zero + nums) % numbers.size].value }
     }
 
-    fun partOne(): Int {
+    fun partOne(): Long {
         mix(numbers)
         return coords(numbers)
     }
 
-    fun partTwo() {}
+    fun partTwo(): Long {
+        repeat(10) {
+            mix(appliedNumbers)
+        }
+        return coords(appliedNumbers)
+    }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day20_2022.txt")
     val solver = DayTwenty(input)
-    println(solver.partOne())
+//    println(solver.partOne())
+    println(solver.partTwo())
 }
