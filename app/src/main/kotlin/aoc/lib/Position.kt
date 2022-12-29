@@ -49,6 +49,11 @@ data class Position(val x: Int, val y: Int) {
         return (1..steps).scan(this) { last, _ -> Position(last.x + xDelta, last.y + yDelta) }
     }
 
+    fun east(): Position = Position(this.x + 1, this.y)
+    fun west(): Position = Position(this.x - 1, this.y)
+    fun north(): Position = Position(this.x, this.y - 1)
+    fun south(): Position = Position(this.x, this.y + 1)
+
     companion object {
         val ORIGIN = Position(0, 0)
 

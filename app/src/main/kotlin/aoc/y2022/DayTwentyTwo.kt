@@ -8,61 +8,40 @@ import java.lang.StringBuilder
 class Board {
     var grid: MutableMap<Position, Char> = mutableMapOf()
 
-    fun getStart(): Position {
-        val lowestX = grid.keys.filter { p -> p.y == 0 }.map { it.x }.minOrNull() ?: 0
-        return Position(lowestX, 0)
-    }
+    fun getMinXInRow(y: Int): Int = grid.keys.filter { p -> p.y == y }.map { it.x }.minOrNull() ?: 0
+    fun getMaxXInRow(y: Int): Int = grid.keys.filter { p -> p.y == y }.map { it.x }.maxOrNull() ?: 0
+    fun getMinYInCol(x: Int): Int = grid.keys.filter { p -> p.x == x }.map { it.y }.minOrNull() ?: 0
+    fun getMaxYInCol(x: Int): Int = grid.keys.filter { p -> p.x == x }.map { it.y }.maxOrNull() ?: 0
 
-    fun canMove(position: Position) = grid.contains(position) && grid[position] == '.'
+    fun getEast(p: Position): Position = if (grid.contains(p.east())) p.east() else Position(getMinXInRow(y = p.y), p.y)
+    fun getWest(p: Position): Position = if (grid.contains(p.west())) p.west() else Position(getMaxXInRow(y = p.y), p.y)
+    fun getSouth(p: Position): Position =
+        if (grid.contains(p.south())) p.south() else Position(p.x, getMinYInCol(x = p.x))
+    fun getNorth(p: Position): Position =
+        if (grid.contains(p.north())) p.north() else Position(p.x, getMaxYInCol(x = p.x))
+
+    fun getNext(current: Player): Position {
+        val next = when (current.facing) {
+            Direction.NORTH -> getNorth(current.location)
+            Direction.SOUTH -> getSouth(current.location)
+            Direction.EAST -> getEast(current.location)
+            Direction.WEST -> getWest(current.location)
+        }
+        return if (grid[next] == '.') next else current.location
+    }
 
     fun move(current: Player, units: Int): Player {
-        var position = current.current
+        var position = current.location
         var steps = 0
-        when (current.facing) {
-            Direction.NORTH -> {
-                while (steps < units) {
-                    val next = Position(position.x, position.y - 1)
-                    if (canMove(next)) {
-                        position = next
-                    }
-                    steps++
-                }
-                return Player(position, current.facing)
-            }
-            Direction.SOUTH -> {
-                while (steps < units) {
-                    val next = Position(position.x, position.y + 1)
-                    if (canMove(next)) {
-                        position = next
-                    }
-                    steps++
-                }
-                return Player(position, current.facing)
-            }
-            Direction.EAST -> {
-                while (steps < units) {
-                    val next = Position(position.x + 1, position.y)
-                    if (canMove(next)) {
-                        position = next
-                    }
-                    steps++
-                }
-                return Player(position, current.facing)
-            }
-            Direction.WEST -> {
-                while (steps < units) {
-                    val next = Position(position.x - 1, position.y)
-                    if (canMove(next)) {
-                        position = next
-                    }
-                    steps++
-                }
-                return Player(position, current.facing)
-            }
+        while (steps < units) {
+            position = getNext(current)
+            current.location = position
+            steps++
         }
+        return Player(position, current.facing)
     }
 
-    fun turn(current: Player, dir: String): Player = Player(current.current, facing = current.facing.turn(to = dir))
+    fun turn(current: Player, dir: String): Player = Player(current.location, facing = current.facing.turn(to = dir))
 
     fun printBoard(player: Player): String {
         val positions = grid.keys
@@ -74,7 +53,7 @@ class Board {
         for (y in 0..maxY) {
             for (x in 0..maxX) {
                 val p = Position(x, y)
-                if (player.current == p) {
+                if (player.location == p) {
                     when (player.facing) {
                         Direction.EAST -> string.append(">")
                         Direction.WEST -> string.append("<")
@@ -94,7 +73,7 @@ class Board {
     }
 }
 
-data class Player(val current: Position, val facing: Direction)
+data class Player(var location: Position, val facing: Direction)
 
 class DayTwentyTwo(private val input: String) {
     val board = Board()
@@ -137,15 +116,24 @@ class DayTwentyTwo(private val input: String) {
         }
     }
 
+    fun getPassword(player: Player): Int {
+        val row = ((player.location.y + 1) * 1000)
+        val col = ((player.location.x + 1) * 4)
+        val facing = when (player.facing) {
+            Direction.EAST -> 0
+            Direction.SOUTH -> 1
+            Direction.WEST -> 2
+            Direction.NORTH -> 3
+        }
+        return row + col + facing
+    }
+
     fun partOne(): Int {
-        // if grid doesn't contain, it means we are off the map and we need to wrap
-        var player = Player(board.getStart(), Direction.EAST)
+        var player = Player(Position(board.getMinXInRow(y = 0), 0), Direction.EAST)
         for (step in instructions) {
             player = step(step, player)
-            println(board.printBoard(player))
-            println(step)
         }
-        return 0
+        return getPassword(player)
     }
 
     fun partTwo() {}
@@ -154,5 +142,5 @@ class DayTwentyTwo(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day22_2022.txt")
     val solver = DayTwentyTwo(input)
-    println(solver.partOne())
+    println(solver.partOne()) //196092
 }
