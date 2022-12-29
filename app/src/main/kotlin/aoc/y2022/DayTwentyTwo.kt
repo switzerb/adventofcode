@@ -2,7 +2,8 @@ package aoc.y2022
 
 import aoc.lib.Direction
 import aoc.lib.Position
-import aoc.lib.Resources.fileAsString
+import aoc.lib.Resources.toURI
+import java.io.File
 import java.lang.StringBuilder
 
 class Board {
@@ -17,6 +18,7 @@ class Board {
     fun getWest(p: Position): Position = if (grid.contains(p.west())) p.west() else Position(getMaxXInRow(y = p.y), p.y)
     fun getSouth(p: Position): Position =
         if (grid.contains(p.south())) p.south() else Position(p.x, getMinYInCol(x = p.x))
+
     fun getNorth(p: Position): Position =
         if (grid.contains(p.north())) p.north() else Position(p.x, getMaxYInCol(x = p.x))
 
@@ -140,7 +142,7 @@ class DayTwentyTwo(private val input: String) {
 }
 
 fun main(args: Array<String>) {
-    val input = fileAsString("2022/day22_2022.txt")
+    val input = File("2022/day22_2022.txt".toURI()).readText()
     val solver = DayTwentyTwo(input)
-    println(solver.partOne()) //196092
+    println(solver.partOne()) // 196092
 }
