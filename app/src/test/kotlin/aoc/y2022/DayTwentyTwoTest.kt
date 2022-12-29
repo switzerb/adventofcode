@@ -31,6 +31,11 @@ class DayTwentyTwoTest {
     }
 
     @Test
+    fun t1_p2() {
+        assertEquals(5031, solver.partTwo())
+    }
+
+    @Test
     fun t2_p1() {
         val player = Player(Position(8, 0), Direction.EAST)
         val expected = """

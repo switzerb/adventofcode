@@ -138,11 +138,13 @@ class DayTwentyTwo(private val input: String) {
         return getPassword(player)
     }
 
-    fun partTwo() {}
+    fun partTwo(): Int {
+        return 0
+    }
 }
 
 fun main(args: Array<String>) {
     val input = File("2022/day22_2022.txt".toURI()).readText()
     val solver = DayTwentyTwo(input)
-    println(solver.partOne()) // 196092
+    println(solver.partOne()) // 97356
 }
