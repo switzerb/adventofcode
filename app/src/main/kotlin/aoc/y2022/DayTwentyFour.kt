@@ -143,7 +143,6 @@ class DayTwentyFour(private val input: String) {
 
             if (current !in visited) {
                 visited.add(current)
-                println(current.valley.draw(current.expedition))
                 val options = mutableListOf<Position>()
                 options.add(current.expedition)
                 options.addAll(current.expedition.nextTo())
@@ -152,6 +151,10 @@ class DayTwentyFour(private val input: String) {
                     .filterNot { it in current.valley.blizzards.keys }
 
                 if (moves.any { it == end }) return current.steps
+                println(current.steps)
+                if (current.steps > 500) {
+                    break
+                }
                 moves.forEach {
                     queue.add(
                         State(
