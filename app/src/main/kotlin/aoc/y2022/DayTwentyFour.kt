@@ -71,6 +71,7 @@ class DayTwentyFour(private val input: String) {
             }
         }
     }
+    val valleyLookup: MutableMap<Int, Valley> = mutableMapOf()
 
     data class State(val expedition: Position, val valley: Valley, val steps: Int) {
 
@@ -151,15 +152,12 @@ class DayTwentyFour(private val input: String) {
                     .filterNot { it in current.valley.blizzards.keys }
 
                 if (moves.any { it == end }) return current.steps
-                println(current.steps)
-                if (current.steps > 500) {
-                    break
-                }
+                val next = valleyLookup.getOrPut(current.steps) { tick(current.valley) }
                 moves.forEach {
                     queue.add(
                         State(
                             expedition = it,
-                            valley = tick(current.valley),
+                            valley = next,
                             steps = current.steps + 1
                         )
                     )
