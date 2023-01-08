@@ -132,11 +132,12 @@ class DayTwentyFour(private val input: String) {
         return p.x <= 0 || p.y <= 0 || p.x >= width || p.y >= height
     }
 
-    fun partOne(): Int {
+    /**
+     * takes a position end point and returns shortest path to get there?
+     */
+    fun walkToDestination(destination: Position, state: State): Int {
         val visited = mutableSetOf<State>()
         val queue = mutableListOf<State>()
-
-        val state = State(expedition = start, valley = initialValley(), steps = 0)
         queue.add(state)
 
         while (queue.isNotEmpty()) {
@@ -151,7 +152,7 @@ class DayTwentyFour(private val input: String) {
                     .filterNot { isEdge(it) }
                     .filterNot { it in current.valley.blizzards.keys }
 
-                if (moves.any { it == end }) return current.steps
+                if (moves.any { it == destination }) return current.steps
                 val next = valleyLookup.getOrPut(current.steps) { tick(current.valley) }
                 moves.forEach {
                     queue.add(
@@ -167,7 +168,15 @@ class DayTwentyFour(private val input: String) {
         throw IllegalStateException("No valid path found.")
     }
 
-    fun partTwo() {}
+    fun partOne(): Int = walkToDestination(
+        destination = end,
+        state = State(expedition = start, valley = initialValley(), steps = 0)
+    )
+
+    fun partTwo(): Int {
+        val destinations = listOf<Position>(end, start, end)
+        return 0
+    }
 }
 
 fun main(args: Array<String>) {

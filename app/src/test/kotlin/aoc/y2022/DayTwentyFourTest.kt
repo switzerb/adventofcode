@@ -31,6 +31,12 @@ class DayTwentyFourTest {
     }
 
     @Test
+    fun t1_p2() {
+        val solver = DayTwentyFour(extended)
+        assertEquals(54, solver.partTwo())
+    }
+
+    @Test
     fun t2_p1() {
         val solver = DayTwentyFour(simple)
         val expected = """
