@@ -11,7 +11,7 @@ data class Valley(
     val end: Position,
     val width: Int,
     val height: Int,
-    val me: Position,
+    val expedition: Position,
     val blizzards: Map<Position, MutableList<Blizzard>>
 ) {
     override fun toString(): String {
@@ -19,7 +19,9 @@ data class Valley(
         for (y in 0..height) {
             for (x in 0..width) {
                 val current = Position(x, y)
-                if (current == start || current == end) {
+                if (current == expedition) {
+                    str.append("E")
+                } else if (current == start || current == end) {
                     str.append(".")
                 } else if (x == 0 || x == width || y == 0 || y == height) {
                     str.append("#")
@@ -78,7 +80,7 @@ class DayTwentyFour(private val input: String) {
             end = end,
             width = width,
             height = height,
-            me = start,
+            expedition = start,
             blizzards = blizzards
         )
     }

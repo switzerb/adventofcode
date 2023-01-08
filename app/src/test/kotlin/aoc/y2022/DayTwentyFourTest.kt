@@ -34,7 +34,7 @@ class DayTwentyFourTest {
     fun t2_p1() {
         val solver = DayTwentyFour(simple)
         val expected = """
-            #.#####
+            #E#####
             #.....#
             #>....#
             #.....#
@@ -50,7 +50,7 @@ class DayTwentyFourTest {
     fun t3_p1() {
         val solver = DayTwentyFour(simple)
         val one = """
-            #.#####
+            #E#####
             #.....#
             #.>...#
             #.....#
@@ -60,7 +60,7 @@ class DayTwentyFourTest {
 
         """.trimIndent()
         val two = """
-            #.#####
+            #E#####
             #...v.#
             #..>..#
             #.....#
@@ -71,7 +71,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val three = """
-            #.#####
+            #E#####
             #.....#
             #...2.#
             #.....#
@@ -82,7 +82,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val four = """
-            #.#####
+            #E#####
             #.....#
             #....>#
             #...v.#
@@ -93,7 +93,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val five = """
-            #.#####
+            #E#####
             #.....#
             #>....#
             #.....#
@@ -119,7 +119,7 @@ class DayTwentyFourTest {
     fun t4_p1() {
         val solver = DayTwentyFour(extended)
         val init = """
-            #.######
+            #E######
             #>>.<^<#
             #.<..<<#
             #>v.><>#
@@ -129,7 +129,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val one = """
-            #.######
+            #E######
             #.>3.<.#
             #<..<<.#
             #>2.22.#
@@ -139,7 +139,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val two = """
-            #.######
+            #E######
             #.2>2..#
             #.^22^<#
             #.>2.^>#
@@ -149,7 +149,7 @@ class DayTwentyFourTest {
         """.trimIndent()
 
         val three = """
-            #.######
+            #E######
             #<^<22.#
             #.2<.2.#
             #><2>..#
