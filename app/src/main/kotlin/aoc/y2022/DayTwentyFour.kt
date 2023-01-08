@@ -11,10 +11,9 @@ data class Valley(
     val end: Position,
     val width: Int,
     val height: Int,
-    val expedition: Position,
     val blizzards: Map<Position, MutableList<Blizzard>>
 ) {
-    override fun toString(): String {
+    fun draw(expedition: Position? = start): String {
         val str = StringBuilder()
         for (y in 0..height) {
             for (x in 0..width) {
@@ -44,11 +43,11 @@ data class Valley(
         }
         return str.toString()
     }
+
+    override fun toString(): String = draw()
 }
 
 class DayTwentyFour(private val input: String) {
-
-    var valley: Valley
     val rows = input.split("\n")
     val width = rows.first().length - 1
     val height = rows.size - 1
@@ -56,33 +55,39 @@ class DayTwentyFour(private val input: String) {
     val endX = getStartorEnd(row = rows.last()) ?: throw IllegalArgumentException("No start found.")
     val start = Position(startX, 0)
     val end = Position(endX, height)
-
-    init {
-        val blizzards = buildMap {
-            rows.mapIndexed { y, row ->
-                row.mapIndexed { x, char ->
-                    val dir = when (char) {
-                        '^' -> Blizzard.NORTH
-                        'v' -> Blizzard.SOUTH
-                        '<' -> Blizzard.WEST
-                        '>' -> Blizzard.EAST
-                        else -> null
-                    }
-                    if (dir != null) {
-                        put(Position(x, y), mutableListOf(dir))
-                    }
+    val blizzards = buildMap {
+        rows.mapIndexed { y, row ->
+            row.mapIndexed { x, char ->
+                val dir = when (char) {
+                    '^' -> Blizzard.NORTH
+                    'v' -> Blizzard.SOUTH
+                    '<' -> Blizzard.WEST
+                    '>' -> Blizzard.EAST
+                    else -> null
+                }
+                if (dir != null) {
+                    put(Position(x, y), mutableListOf(dir))
                 }
             }
         }
+    }
 
-        valley = Valley(
-            start = start,
-            end = end,
-            width = width,
-            height = height,
-            expedition = start,
-            blizzards = blizzards
-        )
+    data class State(val expedition: Position, val valley: Valley, val steps: Int) {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is State) return false
+
+            if (expedition != other.expedition) return false
+            if (!valley.blizzards.equals(other.valley.blizzards)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = expedition.hashCode()
+            result = 31 * result + valley.hashCode()
+            return result
+        }
     }
 
     private fun getStartorEnd(row: String): Int? {
@@ -99,7 +104,7 @@ class DayTwentyFour(private val input: String) {
         }
     }
 
-    fun move(current: Valley): Valley {
+    fun tick(current: Valley): Valley {
         val newState = mutableMapOf<Position, MutableList<Blizzard>>()
         current.blizzards.forEach { (position, items) ->
             for (blizzard in items) {
@@ -112,14 +117,53 @@ class DayTwentyFour(private val input: String) {
         return current.copy(blizzards = newState.toMap())
     }
 
+    fun initialValley(): Valley = Valley(
+        start = start,
+        end = end,
+        width = width,
+        height = height,
+        blizzards = blizzards
+    )
+
+    fun isEdge(p: Position): Boolean {
+        if (p == start) return false
+        if (p == end) return false
+        return p.x <= 0 || p.y <= 0 || p.x >= width || p.y >= height
+    }
+
     fun partOne(): Int {
-        var steps = 0
-        valley = move(valley)
-//        do {
-//            valley = step(valley)
-//            steps++
-//        } while (valley.me != valley.exit)
-        return steps
+        val visited = mutableSetOf<State>()
+        val queue = mutableListOf<State>()
+
+        val state = State(expedition = start, valley = initialValley(), steps = 0)
+        queue.add(state)
+
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+
+            if (current !in visited) {
+                visited.add(current)
+                println(current.valley.draw(current.expedition))
+                val options = mutableListOf<Position>()
+                options.add(current.expedition)
+                options.addAll(current.expedition.nextTo())
+                val moves = options
+                    .filterNot { isEdge(it) }
+                    .filterNot { it in current.valley.blizzards.keys }
+
+                if (moves.any { it == end }) return current.steps
+                moves.forEach {
+                    queue.add(
+                        State(
+                            expedition = it,
+                            valley = tick(current.valley),
+                            steps = current.steps + 1
+                        )
+                    )
+                }
+            }
+        }
+        throw IllegalStateException("No valid path found.")
     }
 
     fun partTwo() {}

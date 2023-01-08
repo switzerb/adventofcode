@@ -43,7 +43,7 @@ class DayTwentyFourTest {
             #####.#
             
         """.trimIndent()
-        assertEquals(expected, solver.valley.toString())
+        assertEquals(expected, solver.initialValley().toString())
     }
 
     @Test
@@ -103,11 +103,11 @@ class DayTwentyFourTest {
             
         """.trimIndent()
 
-        val min1 = solver.move(current = solver.valley)
-        val min2 = solver.move(current = min1)
-        val min3 = solver.move(current = min2)
-        val min4 = solver.move(current = min3)
-        val min5 = solver.move(current = min4)
+        val min1 = solver.tick(current = solver.initialValley())
+        val min2 = solver.tick(current = min1)
+        val min3 = solver.tick(current = min2)
+        val min4 = solver.tick(current = min3)
+        val min5 = solver.tick(current = min4)
         assertEquals(one, min1.toString())
         assertEquals(two, min2.toString())
         assertEquals(three, min3.toString())
@@ -157,10 +157,10 @@ class DayTwentyFourTest {
             ######.#
             
         """.trimIndent()
-        val start = solver.valley
-        val min1 = solver.move(start)
-        val min2 = solver.move(min1)
-        val min3 = solver.move(min2)
+        val start = solver.initialValley()
+        val min1 = solver.tick(start)
+        val min2 = solver.tick(min1)
+        val min3 = solver.tick(min2)
         assertEquals(init, start.toString())
         assertEquals(one, min1.toString())
         assertEquals(two, min2.toString())
