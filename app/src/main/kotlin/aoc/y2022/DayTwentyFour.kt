@@ -73,23 +73,7 @@ class DayTwentyFour(private val input: String) {
     }
     val valleyLookup: MutableMap<Int, Valley> = mutableMapOf()
 
-    data class State(val expedition: Position, val valley: Valley, val steps: Int) {
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is State) return false
-
-            if (expedition != other.expedition) return false
-            if (!valley.blizzards.equals(other.valley.blizzards)) return false
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = expedition.hashCode()
-            result = 31 * result + valley.hashCode()
-            return result
-        }
-    }
+    data class State(val expedition: Position, val step: Int)
 
     private fun getStartorEnd(row: String): Int? {
         val idx = row.toCharArray().indexOf('.')
@@ -132,6 +116,13 @@ class DayTwentyFour(private val input: String) {
         return p.x <= 0 || p.y <= 0 || p.x >= width || p.y >= height
     }
 
+    fun getMoves(p: Position): MutableSet<Position> {
+        val options = mutableSetOf<Position>()
+        options.add(p)
+        options.addAll(p.nextTo())
+        return options
+    }
+
     /**
      * takes a position end point and returns shortest path to get there?
      */
@@ -145,21 +136,19 @@ class DayTwentyFour(private val input: String) {
 
             if (current !in visited) {
                 visited.add(current)
-                val options = mutableListOf<Position>()
-                options.add(current.expedition)
-                options.addAll(current.expedition.nextTo())
+                val next = valleyLookup.getOrPut(current.step) { tick(valleyLookup[current.step - 1]!!) }
+                val options = getMoves(current.expedition)
                 val moves = options
                     .filterNot { isEdge(it) }
-                    .filterNot { it in current.valley.blizzards.keys }
+                    .filterNot { it in next.blizzards }
 
-                if (moves.any { it == destination }) return current.steps
-                val next = valleyLookup.getOrPut(current.steps) { tick(current.valley) }
+                if (moves.any { it == destination }) return current.step
+
                 moves.forEach {
                     queue.add(
                         State(
                             expedition = it,
-                            valley = next,
-                            steps = current.steps + 1
+                            step = current.step + 1
                         )
                     )
                 }
@@ -168,19 +157,34 @@ class DayTwentyFour(private val input: String) {
         throw IllegalStateException("No valid path found.")
     }
 
-    fun partOne(): Int = walkToDestination(
-        destination = end,
-        state = State(expedition = start, valley = initialValley(), steps = 0)
-    )
+    fun partOne(): Int {
+        valleyLookup[0] = initialValley()
+        return walkToDestination(
+            destination = end,
+            state = State(expedition = start, step = 1)
+        )
+    }
 
     fun partTwo(): Int {
-        val destinations = listOf<Position>(end, start, end)
-        return 0
+        valleyLookup[0] = initialValley()
+        val there = walkToDestination(
+            destination = end,
+            state = State(expedition = start, step = 1)
+        )
+        val back = walkToDestination(
+            destination = start,
+            state = State(expedition = end, step = there)
+        )
+        return walkToDestination(
+            destination = end,
+            state = State(expedition = start, step = back)
+        )
     }
 }
 
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day24_2022.txt")
     val solver = DayTwentyFour(input)
-    println(solver.partOne())
+//    println(solver.partOne())
+    println(solver.partTwo())
 }
