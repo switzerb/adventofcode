@@ -24,11 +24,11 @@ class DayTwentyFive(private val input: String) {
         return places.mapIndexed { idx, char ->
             val placeValue = BASE.pow(idx)
             when (char) {
-                '2' -> (2 * placeValue).toLong()
-                '1' -> (1 * placeValue).toLong()
                 '0' -> (0 * placeValue).toLong()
-                '-' -> (-1 * placeValue).toLong()
+                '1' -> (1 * placeValue).toLong()
+                '2' -> (2 * placeValue).toLong()
                 '=' -> (-2 * placeValue).toLong()
+                '-' -> (-1 * placeValue).toLong()
                 else -> throw UnsupportedOperationException("$char not recognized")
             }
         }.sum()
