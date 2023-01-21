@@ -19,65 +19,14 @@ class DaySixteenTest {
     """.trimIndent()
 
     @Test
-    fun test() {
-        val solver = DaySixteen(input)
-        assertEquals(1651, solver.partOne())
-    }
-
-    @Test
     fun t1_p1() {
         val solver = DaySixteen(input)
-        val graph = solver.buildValveGraph()
-        val start = graph.fromName("AA")
-        val end = graph.fromName("DD")
-        val step = Step(
-            valve = graph.fromName("AA"),
-            timeRemaining = 1,
-            totalFlow = 0,
-            openValves = listOf(start)
-        )
-        assertEquals(
-            step.moveToAndOpen(
-                valve = end,
-                graph = graph
-            ),
-            Step(
-                valve = end,
-                timeRemaining = 3,
-                totalFlow = 560,
-                openValves = listOf(start, end)
-            )
-        )
+        assertEquals(1651, solver.partOne(30))
     }
 
     @Test
-    fun t2_p1() {
+    fun t1_p2() {
         val solver = DaySixteen(input)
-        val graph = solver.buildValveGraph()
-        val AA = graph.fromName("AA")
-        val DD = graph.fromName("DD")
-        val BB = graph.fromName("BB")
-        val JJ = graph.fromName("JJ")
-        val HH = graph.fromName("HH")
-        val EE = graph.fromName("EE")
-        val CC = graph.fromName("CC")
-        val step = Step(
-            valve = EE,
-            timeRemaining = 9,
-            totalFlow = 0,
-            openValves = listOf(AA, DD, BB, JJ, HH, EE)
-        )
-        assertEquals(
-            Step(
-                valve = CC,
-                timeRemaining = 6,
-                totalFlow = 1651,
-                openValves = listOf(AA, DD, BB, JJ, HH, EE, CC)
-            ),
-            step.moveToAndOpen(
-                valve = CC,
-                graph = graph
-            )
-        )
+        assertEquals(1707, solver.partTwo(26))
     }
 }
