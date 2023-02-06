@@ -1,63 +1,146 @@
 package aoc.y2022
 
 import aoc.lib.Resources.fileAsString
+import java.util.*
 
-sealed class Robot {
-    abstract fun build(): Int
-    fun produce(): Int {
-        TODO("Not yet implemented")
-    }
+typealias Cost = Map<Resource, Int>
+
+enum class Resource {
+    ORE,
+    CLAY,
+    OBSIDIAN,
+    GEODE,
 }
 
-data class Clay(val something: Any) : Robot() {
-    override fun build(): Int {
-        TODO("Not yet implemented")
-    }
-}
-
-data class Blueprint(
-    val id: Int,
-    val oreCost: Int,
-    val clayCost: Int,
-    val obsidianCost: Int,
-    val geodeCost: Int
-)
+const val TIME_ALLOWED = 24
 
 class DayNineteen(private val input: String) {
 
-    // ore -> clay -> obsidian -> geode
-    var ore: Int = 0
-    var oreRobotCount = 1
+    data class State(
+        val currentTime: Int,
+        var materials: Map<Resource, Int> = mapOf(
+            Resource.ORE to 0,
+            Resource.CLAY to 0,
+            Resource.OBSIDIAN to 0,
+            Resource.GEODE to 0
+        ),
+        val production: Map<Resource, Int> = mapOf(
+            Resource.ORE to 1,
+            Resource.CLAY to 0,
+            Resource.OBSIDIAN to 0,
+            Resource.GEODE to 0
+        )
+    ) : Comparable<State> {
 
-    // if we have enough ore, build a clay robot and increment
+        fun canPurchase(cost: Cost): Boolean {
+            for (resource in cost.keys) {
+                if (!materials.containsKey(resource)) return false
+                if (materials[resource]!! < cost[resource]!!) return false
+            }
+            return true
+        }
 
-    // if we have enough ore and clay, build an obsidian robot
+        fun buildRobot(resource: Resource): State {
+            val newState = this.copy()
+             production.plus(Pair(resource, production.getOrDefault(resource, 0) + 1))
+            return newState
+        }
 
-    // if we have enough ore and obsidian, build a geode robot
+
+        fun collect(): Map<Resource, Int> {
+            val next = mutableMapOf<Resource, Int>()
+            for (resource in production.keys) {
+                next[resource] = materials.getOrDefault(resource, 0) + production.getOrDefault(resource, 0)
+            }
+            return next
+        }
+
+        fun getGeodeCount(): Int = materials.getOrDefault(Resource.GEODE, 0)
+        override fun compareTo(other: State): Int = other.getGeodeCount().compareTo(getGeodeCount())
+    }
+
+    data class Blueprint(
+        val id: Int,
+        val ore: Cost,
+        val clay: Cost,
+        val obsidian: Cost,
+        val geode: Cost
+    ) {
+        //  to construct any type of robot, although it consumes
+        //  the necessary resources available when construction begins.
+        fun tick(state: State): List<State> {
+            val nexts = mutableListOf<State>()
+
+            // 1. do nothing
+            nexts.add(state.copy(currentTime = state.currentTime + 1))
+
+            // 2. build an ore robot
+            if (state.canPurchase(this.ore)) {
+                nexts.add(state.buildRobot(Resource.ORE))
+            }
+
+            // 3. clay
+            if (state.canPurchase(this.clay)) {
+                nexts.add(state.copy(production = state.buildRobot(Resource.CLAY)))
+            }
+
+            // 4. obsidian
+            if (state.canPurchase(this.obsidian)) {
+                nexts.add(state.copy(production = state.buildRobot(Resource.OBSIDIAN)))
+            }
+
+            // 5. geode
+            if (state.canPurchase(this.geode)) {
+                nexts.add(state.copy(production = state.buildRobot(Resource.GEODE)))
+            }
+
+            // collect from existing robots, we want to collect for every option
+            for (next in nexts) {
+                next.materials = state.collect()
+            }
+
+            return nexts.filter { it.currentTime <= TIME_ALLOWED }
+        }
+    }
 
     // Determine the quality level of each blueprint by multiplying that blueprint's ID number
     fun qualityLevel(id: Int, geodes: Int) = id * geodes
 
-    // represents action in one minute
-    fun tick() {
-        ore += 1 * oreRobotCount
+    val blueprints = listOf(
+        Blueprint(
+            id = 1,
+            ore = mapOf(Resource.ORE to 4),
+            clay = mapOf(Resource.ORE to 2),
+            obsidian = mapOf(Resource.ORE to 3, Resource.CLAY to 14),
+            geode = mapOf(Resource.ORE to 2, Resource.OBSIDIAN to 7)
+        ),
+        Blueprint(
+            id = 2,
+            ore = mapOf(Resource.ORE to 2),
+            clay = mapOf(Resource.ORE to 3),
+            obsidian = mapOf(Resource.ORE to 3, Resource.CLAY to 8),
+            geode = mapOf(Resource.ORE to 3, Resource.OBSIDIAN to 12)
+        )
+    )
 
-        // total clay
-        // increment ore from ore robot
-        // if there is enough ore, make a clay robot
+    private fun geodesFinder(blueprint: Blueprint, timer: Int): Int {
+        var maxGeodes = 0
+        val queue = PriorityQueue<State>().apply { add(State()) }
+
+        while (queue.isNotEmpty()) {
+            val state = queue.poll()
+            queue.addAll(state.tick(blueprint, timeRemaining = timer))
+            maxGeodes = maxOf(maxGeodes, state.getGeodeCount())
+        }
+
+        return maxGeodes
     }
 
     fun partOne(timer: Int): Int {
-        // for each blueprint
-        repeat(timer) {
-            tick()
-        }
+        val blueprint = blueprints[0]
 
-//        Blueprint 1:
-//        Each ore robot costs 4 ore.
-//        Each clay robot costs 2 ore.
-//        Each obsidian robot costs 3 ore and 14 clay.
-//        Each geode robot costs 2 ore and 7 obsidian.
+        geodesFinder(blueprint, timer)
+
         return 0
     }
 
