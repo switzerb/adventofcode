@@ -17,89 +17,115 @@ const val TIME_ALLOWED = 24
 class DayNineteen(private val input: String) {
 
     data class State(
-        val currentTime: Int,
-        var materials: Map<Resource, Int> = mapOf(
-            Resource.ORE to 0,
-            Resource.CLAY to 0,
-            Resource.OBSIDIAN to 0,
-            Resource.GEODE to 0
-        ),
-        val production: Map<Resource, Int> = mapOf(
-            Resource.ORE to 1,
-            Resource.CLAY to 0,
-            Resource.OBSIDIAN to 0,
-            Resource.GEODE to 0
-        )
+        var currentTime: Int = TIME_ALLOWED,
+        var ore: Int = 0,
+        var clay: Int = 0,
+        var obsidian: Int = 0,
+        var geodes: Int = 0,
+        var oreRobots: Int = 1,
+        var clayRobots: Int = 0,
+        var obsidianRobots: Int = 0,
+        var geodeRobots: Int = 0
     ) : Comparable<State> {
 
-        fun canPurchase(cost: Cost): Boolean {
-            for (resource in cost.keys) {
-                if (!materials.containsKey(resource)) return false
-                if (materials[resource]!! < cost[resource]!!) return false
+        fun canBuild(costs: Cost): Boolean {
+            for (cost in costs) {
+                when (cost.key) {
+                    Resource.ORE -> if (ore < cost.value) return false
+                    Resource.CLAY -> if (clay < cost.value) return false
+                    Resource.OBSIDIAN -> if (obsidian < cost.value) return false
+                    else -> throw UnsupportedOperationException("Cost ${cost.key} is not recognized")
+                }
             }
             return true
         }
 
-        fun buildRobot(resource: Resource): State {
+        fun purchase(costs: Cost) {
+            for (cost in costs) {
+                when (cost.key) {
+                    Resource.ORE -> ore -= cost.value
+                    Resource.CLAY -> clay -= cost.value
+                    Resource.OBSIDIAN -> obsidian -= cost.value
+                    else -> throw UnsupportedOperationException("Cost ${cost.key} is not recognized")
+                }
+            }
+        }
+
+        fun buildRobot(resource: Resource, cost: Cost): State {
             val newState = this.copy()
-             production.plus(Pair(resource, production.getOrDefault(resource, 0) + 1))
+            when (resource) {
+                Resource.ORE -> {
+                    newState.oreRobots = oreRobots + 1
+                }
+                Resource.CLAY -> {
+                    newState.clayRobots = clayRobots + 1
+                }
+                Resource.OBSIDIAN -> {
+                    newState.obsidianRobots = obsidianRobots + 1
+                }
+                Resource.GEODE -> {
+                    println("something")
+                    newState.geodeRobots = geodeRobots + 1
+                }
+            }
+            newState.purchase(cost)
             return newState
         }
 
-
-        fun collect(): Map<Resource, Int> {
-            val next = mutableMapOf<Resource, Int>()
-            for (resource in production.keys) {
-                next[resource] = materials.getOrDefault(resource, 0) + production.getOrDefault(resource, 0)
-            }
-            return next
+        fun collect() {
+            currentTime -= 1
+            ore += oreRobots
+            clay += clayRobots
+            obsidian += obsidianRobots
+            geodes += geodeRobots
         }
 
-        fun getGeodeCount(): Int = materials.getOrDefault(Resource.GEODE, 0)
-        override fun compareTo(other: State): Int = other.getGeodeCount().compareTo(getGeodeCount())
+        override fun compareTo(other: State): Int = other.geodes.compareTo(geodes)
     }
 
     data class Blueprint(
         val id: Int,
-        val ore: Cost,
-        val clay: Cost,
-        val obsidian: Cost,
-        val geode: Cost
+        val oreCost: Cost,
+        val clayCost: Cost,
+        val obsidianCost: Cost,
+        val geodeCost: Cost
     ) {
         //  to construct any type of robot, although it consumes
         //  the necessary resources available when construction begins.
         fun tick(state: State): List<State> {
-            val nexts = mutableListOf<State>()
+            val nextStates = mutableListOf<State>()
 
             // 1. do nothing
-            nexts.add(state.copy(currentTime = state.currentTime + 1))
+            nextStates.add(state.copy())
 
             // 2. build an ore robot
-            if (state.canPurchase(this.ore)) {
-                nexts.add(state.buildRobot(Resource.ORE))
+            if (state.canBuild(this.oreCost)) {
+                nextStates.add(state.buildRobot(Resource.ORE, oreCost))
             }
 
             // 3. clay
-            if (state.canPurchase(this.clay)) {
-                nexts.add(state.copy(production = state.buildRobot(Resource.CLAY)))
+            if (state.canBuild(this.clayCost)) {
+                nextStates.add(state.buildRobot(Resource.CLAY, clayCost))
             }
 
             // 4. obsidian
-            if (state.canPurchase(this.obsidian)) {
-                nexts.add(state.copy(production = state.buildRobot(Resource.OBSIDIAN)))
+            if (state.canBuild(this.obsidianCost)) {
+                nextStates.add(state.buildRobot(Resource.OBSIDIAN, obsidianCost))
             }
 
             // 5. geode
-            if (state.canPurchase(this.geode)) {
-                nexts.add(state.copy(production = state.buildRobot(Resource.GEODE)))
+            if (state.canBuild(this.geodeCost)) {
+                nextStates.add(state.buildRobot(Resource.GEODE, geodeCost))
             }
 
             // collect from existing robots, we want to collect for every option
-            for (next in nexts) {
-                next.materials = state.collect()
+            for (next in nextStates) {
+                next.collect()
             }
 
-            return nexts.filter { it.currentTime <= TIME_ALLOWED }
+            return nextStates
+                .filter { it.currentTime <= TIME_ALLOWED }
+                .filter { it.currentTime >= 0 }
         }
     }
 
@@ -109,39 +135,35 @@ class DayNineteen(private val input: String) {
     val blueprints = listOf(
         Blueprint(
             id = 1,
-            ore = mapOf(Resource.ORE to 4),
-            clay = mapOf(Resource.ORE to 2),
-            obsidian = mapOf(Resource.ORE to 3, Resource.CLAY to 14),
-            geode = mapOf(Resource.ORE to 2, Resource.OBSIDIAN to 7)
+            oreCost = mapOf(Resource.ORE to 4),
+            clayCost = mapOf(Resource.ORE to 2),
+            obsidianCost = mapOf(Resource.ORE to 3, Resource.CLAY to 14),
+            geodeCost = mapOf(Resource.ORE to 2, Resource.OBSIDIAN to 7)
         ),
         Blueprint(
             id = 2,
-            ore = mapOf(Resource.ORE to 2),
-            clay = mapOf(Resource.ORE to 3),
-            obsidian = mapOf(Resource.ORE to 3, Resource.CLAY to 8),
-            geode = mapOf(Resource.ORE to 3, Resource.OBSIDIAN to 12)
+            oreCost = mapOf(Resource.ORE to 2),
+            clayCost = mapOf(Resource.ORE to 3),
+            obsidianCost = mapOf(Resource.ORE to 3, Resource.CLAY to 8),
+            geodeCost = mapOf(Resource.ORE to 3, Resource.OBSIDIAN to 12)
         )
     )
 
-    private fun geodesFinder(blueprint: Blueprint, timer: Int): Int {
+    private fun geodesFinder(blueprint: Blueprint): Int {
         var maxGeodes = 0
         val queue = PriorityQueue<State>().apply { add(State()) }
 
         while (queue.isNotEmpty()) {
             val state = queue.poll()
-            queue.addAll(state.tick(blueprint, timeRemaining = timer))
-            maxGeodes = maxOf(maxGeodes, state.getGeodeCount())
+            queue.addAll(blueprint.tick(state))
+            maxGeodes = maxOf(maxGeodes, state.geodes)
         }
-
         return maxGeodes
     }
 
-    fun partOne(timer: Int): Int {
+    fun partOne(): Int {
         val blueprint = blueprints[0]
-
-        geodesFinder(blueprint, timer)
-
-        return 0
+        return geodesFinder(blueprint)
     }
 
     fun partTwo() {}
@@ -150,5 +172,5 @@ class DayNineteen(private val input: String) {
 fun main(args: Array<String>) {
     val input = fileAsString("2022/day19_2022.txt")
     val solver = DayNineteen(input)
-    println(solver.partOne(1))
+    println(solver.partOne())
 }

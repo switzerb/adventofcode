@@ -22,6 +22,12 @@ Blueprint 2:
     @Test
     fun test() {
         val solver = DayNineteen(input)
-        assertEquals(33, solver.partOne(timer = 24))
+        assertEquals(33, solver.partOne())
+    }
+
+    @Test
+    fun t1_p1() {
+        val solver = DayNineteen(input)
+        assertEquals(9, solver.partOne())
     }
 }

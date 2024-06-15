@@ -2,11 +2,11 @@ package aoc.y2016
 
 class DayOne2016(val input: String) {
 
-    fun parser() : List<String> {
+    fun parser(): List<String> {
         return input.split(",")
     }
 
-    fun partOne() : Int {
+    fun partOne(): Int {
         val instructions = parser()
         val something = instructions.map { it }
         return 0
@@ -14,7 +14,7 @@ class DayOne2016(val input: String) {
 }
 
 fun main(args: Array<String>) {
-    println("hello world")
+    println("hello world?")
 }
 
 //    # use map to go from R3 to (0,1) (0,2) or whatever to get an array of tuple steps for that move
@@ -96,4 +96,3 @@ fun main(args: Array<String>) {
 //
 //    print(total_distance(end(puzzle_input)))
 //    print('\n')
-
